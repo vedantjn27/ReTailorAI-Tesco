@@ -8,7 +8,7 @@ from pymongo import MongoClient
 from bson import ObjectId
 import gridfs
 from PIL import Image, ImageEnhance
-from rembg import remove
+from rembg_lite import remove
 from bson import ObjectId
 from bson.errors import InvalidId
 from PIL import ImageDraw, ImageFont, ImageStat, ImageOps
