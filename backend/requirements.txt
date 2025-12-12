@@ -38,3 +38,4 @@ apscheduler
 # Utility
 tqdm 
  
+onnxruntime-cpu==1.20.0
