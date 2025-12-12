@@ -1,0 +1,40 @@
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+pymongo
+dnspython
+gridfs
+
+Pillow
+rembg
+opencv-python
+numpy
+scikit-image
+scipy
+
+transformers
+torch
+sentencepiece
+protobuf
+
+python-dotenv
+orjson
+
+# For async tasks & concurrency
+aiofiles
+httpx
+
+# For WebSocket collaboration
+websockets
+
+# For file optimization / batch export
+pillow-avif-plugin
+pillow-webp
+piexif
+
+# Background scheduler (if needed)
+apscheduler
+
+# Utility
+tqdm

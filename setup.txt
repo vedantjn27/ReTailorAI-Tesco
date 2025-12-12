@@ -1,0 +1,61 @@
+#BACKEND SETUP
+Install Python 3.10 or newer on your system and verify it by running python --version in the terminal.
+
+Download or clone the backend project folder onto your computer.
+
+Open a terminal inside the backend project directory.
+
+Create a virtual environment using the command:
+python -m venv venv
+
+Activate the virtual environment:
+
+Windows: venv\Scripts\activate
+
+Mac/Linux: source venv/bin/activate
+
+Install all required backend dependencies using:
+pip install -r requirements.txt
+
+Install MongoDB Community Server on your system from the official MongoDB website.
+
+After installation, start the MongoDB service manually or ensure it is running automatically in your system services.
+
+Open MongoDB Compass (optional) and create a database named:
+RetailorAI
+
+In the backend project folder, create a .env file containing:
+
+MONGODB_URI
+
+DB_NAME
+
+Optional: API keys for enhancement/compliance engines if using external services
+
+Ensure your .env file uses the correct MongoDB connection — example:
+MONGODB_URI=mongodb://localhost:27017
+
+After confirming MongoDB is running, start the FastAPI backend using:
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+Once the server starts, open your browser and visit:
+http://localhost:8000/docs
+to access the Swagger API interface for testing.
+
+Test your file upload using the /upload-asset route. Each uploaded file will be stored in GridFS and also saved locally in the tmp/ folder.
+
+Run enhancements like background removal, Smart Enhancement v2, Smart Crop, Multi-Channel Auto Resize, or Layout Suggestions using the generated file_id.
+
+Each enhancement request automatically creates a new file ID, allowing unlimited chained enhancement versions.
+
+Smart crop, smart enhancement v2, auto-resize, batch processing, template application, and campaign workspace storage all function using MongoDB + GridFS without requiring any additional services.
+
+To use AI-based Layout Suggestions or Predictive Creative Performance Engine, ensure your system supports PyTorch. These models will download automatically on first use.
+
+If performance models are large, the backend may take a few extra seconds to load the first enhancement or prediction. After that, they remain cached.
+
+To stop the backend server, press CTRL + C in the terminal running Uvicorn.
+
+You can safely delete any asset using the /asset/{file_id} DELETE route, which removes the file from GridFS and your processed folder.
+
+The backend is now fully configured and ready for integration with your frontend or mobile app.
