@@ -30,7 +30,6 @@ websockets
 
 # For file optimization / batch export
 pillow-avif-plugin
-pillow-webp
 piexif
 
 # Background scheduler (if needed)
