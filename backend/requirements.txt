@@ -7,7 +7,7 @@ dnspython
 
 
 Pillow
-rembg_lite
+rembg
 opencv-python
 numpy
 scikit-image
