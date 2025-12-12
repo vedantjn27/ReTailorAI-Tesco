@@ -37,4 +37,4 @@ piexif
 apscheduler
 
 # Utility
-tqdm
+tqdm 
