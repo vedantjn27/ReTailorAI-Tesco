@@ -38,7 +38,7 @@ export default function SettingsPage() {
     const checkBackendConnection = async () => {
       setCheckingConnection(true)
       try {
-        const response = await fetch(`${apiUrl}/health`, {
+        const response = await fetch(`${apiUrl}/`, {
           method: 'GET',
           headers: { 'Content-Type': 'application/json' },
           signal: AbortSignal.timeout(5000) // 5 second timeout
@@ -46,18 +46,18 @@ export default function SettingsPage() {
         
         if (response.ok) {
           setBackendConnected(true)
-          // If backend is connected and demo mode is on, optionally turn it off
-          // Uncomment the next line if you want to auto-disable demo mode when backend connects
-          // if (demoMode) handleDemoModeToggle(false)
+          console.log('[Settings] Backend connected successfully')
+          // Don't automatically disable demo mode - let user control it
         } else {
           setBackendConnected(false)
+          console.log('[Settings] Backend not connected - non-OK response')
           // Auto-enable demo mode if backend is not connected
           if (!demoMode) {
             handleDemoModeToggle(true)
           }
         }
       } catch (error) {
-        console.log('Backend not connected:', error)
+        console.log('[Settings] Backend not connected - error:', error)
         setBackendConnected(false)
         // Auto-enable demo mode if backend is not connected
         if (!demoMode) {
@@ -113,7 +113,7 @@ export default function SettingsPage() {
   const handleTestConnection = async () => {
     setCheckingConnection(true)
     try {
-      const response = await fetch(`${apiUrl}/health`, {
+      const response = await fetch(`${apiUrl}/`, {
         method: 'GET',
         headers: { 'Content-Type': 'application/json' },
         signal: AbortSignal.timeout(5000)
@@ -273,11 +273,11 @@ export default function SettingsPage() {
                       </p>
                     </div>
                   )}
-                  {!backendConnected && !checkingConnection && (
+                  {!backendConnected && !checkingConnection && !demoMode && (
                     <div className="rounded-lg border border-warning/50 bg-warning/10 p-4">
                       <p className="text-sm font-medium text-warning">Backend Server Disconnected</p>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        Demo mode automatically enabled. Connect your backend server to use live data.
+                        Demo mode will be automatically enabled. Connect your backend server to use live data.
                       </p>
                     </div>
                   )}

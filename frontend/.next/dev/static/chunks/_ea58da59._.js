@@ -725,7 +725,97 @@ var _s = __turbopack_context__.k.signature();
 ;
 // API Client Configuration
 const API_BASE_URL = __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$build$2f$polyfills$2f$process$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["default"].env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-const apiClient = {
+// Demo Mode Mock Data
+const generateMockAssets = ()=>[
+        {
+            fileId: "demo_asset_1",
+            filename: "Product Photo 1.jpg",
+            uploadedAt: new Date(Date.now() - 86400000 * 2),
+            thumbnail: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
+            type: "image"
+        },
+        {
+            fileId: "demo_asset_2",
+            filename: "Enhanced Product.jpg",
+            uploadedAt: new Date(Date.now() - 86400000),
+            thumbnail: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop",
+            type: "enhanced"
+        },
+        {
+            fileId: "demo_asset_3",
+            filename: "Cropped Square.jpg",
+            uploadedAt: new Date(Date.now() - 3600000),
+            thumbnail: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
+            type: "cropped"
+        },
+        {
+            fileId: "demo_asset_4",
+            filename: "Watch Collection.jpg",
+            uploadedAt: new Date(Date.now() - 7200000),
+            thumbnail: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=400&fit=crop",
+            type: "image"
+        },
+        {
+            fileId: "demo_asset_5",
+            filename: "Headphones Pro.jpg",
+            uploadedAt: new Date(Date.now() - 10800000),
+            thumbnail: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
+            type: "image"
+        }
+    ];
+const mockApiClient = {
+    uploadAsset: async (file)=>{
+        await new Promise((resolve)=>setTimeout(resolve, 1000));
+        const fileId = `demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+        return {
+            file_id: fileId,
+            filename: file.name
+        };
+    },
+    listAssets: async ()=>{
+        await new Promise((resolve)=>setTimeout(resolve, 500));
+        return generateMockAssets();
+    },
+    removeBackground: async (fileId)=>{
+        await new Promise((resolve)=>setTimeout(resolve, 2000));
+        return {
+            new_file_id: `demo_nobg_${Date.now()}`,
+            message: "Background removed successfully"
+        };
+    },
+    smartEnhance: async (fileId, sharpness, contrast, brightness)=>{
+        await new Promise((resolve)=>setTimeout(resolve, 1500));
+        return {
+            new_file_id: `demo_enhanced_${Date.now()}`,
+            message: "Image enhanced successfully"
+        };
+    },
+    smartCrop: async (fileId, mode)=>{
+        await new Promise((resolve)=>setTimeout(resolve, 1200));
+        return {
+            new_file_id: `demo_cropped_${mode}_${Date.now()}`,
+            message: `Image cropped to ${mode} format`
+        };
+    },
+    deleteAsset: async (fileId)=>{
+        await new Promise((resolve)=>setTimeout(resolve, 300));
+        return {
+            success: true
+        };
+    },
+    getAssetUrl: (fileId)=>{
+        // Return placeholder images for demo mode
+        const demoUrls = {
+            demo_asset_1: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
+            demo_asset_2: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop",
+            demo_asset_3: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
+            demo_asset_4: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=400&fit=crop",
+            demo_asset_5: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop"
+        };
+        return demoUrls[fileId] || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop";
+    }
+};
+const realApiClient = {
     uploadAsset: async (file)=>{
         const formData = new FormData();
         formData.append("file", file);
@@ -787,31 +877,79 @@ function AssetsPage() {
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(true);
     const [processing, setProcessing] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])(false);
     const [searchQuery, setSearchQuery] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])("");
+    const [demoMode, setDemoMode] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useState"])({
+        "AssetsPage.useState": ()=>{
+            if ("TURBOPACK compile-time truthy", 1) {
+                return localStorage.getItem("demo_mode") === "true";
+            }
+            //TURBOPACK unreachable
+            ;
+        }
+    }["AssetsPage.useState"]);
     const fileInputRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const emptyStateInputRef = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useRef"])(null);
     const { toast } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$use$2d$toast$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useToast"])();
-    // Load assets on mount
+    // Get the appropriate API client based on demo mode
+    const apiClient = demoMode ? mockApiClient : realApiClient;
+    // Check demo mode from localStorage and update if needed
+    (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
+        "AssetsPage.useEffect": ()=>{
+            if ("TURBOPACK compile-time truthy", 1) {
+                const isDemoMode = localStorage.getItem("demo_mode") === "true";
+                if (isDemoMode !== demoMode) {
+                    setDemoMode(isDemoMode);
+                }
+                console.log("[Assets] Demo mode initialized:", isDemoMode);
+            }
+        }
+    }["AssetsPage.useEffect"], []);
+    // Load assets on mount or when demo mode changes
     (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$index$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useEffect"])({
         "AssetsPage.useEffect": ()=>{
             loadAssets();
         }
-    }["AssetsPage.useEffect"], []);
+    }["AssetsPage.useEffect"], [
+        demoMode
+    ]);
     const loadAssets = async ()=>{
+        // In demo mode, don't make the API call at all - just use mock data
+        if (demoMode) {
+            try {
+                setLoading(true);
+                const result = await mockApiClient.listAssets();
+                console.log("[Assets] Demo assets loaded:", result);
+                const loadedAssets = result.map((asset)=>({
+                        fileId: asset.fileId,
+                        filename: asset.filename,
+                        uploadedAt: asset.uploadedAt,
+                        thumbnail: asset.thumbnail,
+                        type: asset.type
+                    }));
+                setAssets(loadedAssets);
+            } catch (error) {
+                console.log("[Assets] Demo mode error (ignored):", error);
+                setAssets([]);
+            } finally{
+                setLoading(false);
+            }
+            return;
+        }
+        // Real backend mode
         try {
             setLoading(true);
-            const result = await apiClient.listAssets();
-            console.log("[v0] Assets loaded:", result);
+            const result = await realApiClient.listAssets();
+            console.log("[Assets] Assets loaded:", result);
             // Check if result is an array or has an assets property
             let assetsData = Array.isArray(result) ? result : result.assets || [];
             // Transform the response to match our Asset interface
             const loadedAssets = assetsData.map((asset)=>({
-                    fileId: asset.file_id || asset._id || asset.fileId,
+                    fileId: asset.fileId || asset.file_id || asset._id,
                     filename: asset.filename || "Unnamed Asset",
-                    uploadedAt: new Date(asset.uploaded_at || asset.uploadedAt || Date.now()),
-                    thumbnail: apiClient.getAssetUrl(asset.file_id || asset._id || asset.fileId),
+                    uploadedAt: new Date(asset.uploadedAt || asset.uploaded_at || Date.now()),
+                    thumbnail: asset.thumbnail || realApiClient.getAssetUrl(asset.fileId || asset.file_id || asset._id),
                     type: asset.type || "image"
                 }));
-            console.log("[v0] Transformed assets:", loadedAssets);
+            console.log("[Assets] Transformed assets:", loadedAssets);
             setAssets(loadedAssets);
         } catch (error) {
             console.error("Failed to load assets:", error);
@@ -831,14 +969,16 @@ function AssetsPage() {
             const uploadPromises = Array.from(files).map({
                 "AssetsPage.useCallback[handleUpload].uploadPromises": async (file)=>{
                     try {
-                        console.log("[v0] Uploading file:", file.name);
+                        console.log("[Assets] Uploading file:", file.name);
                         const result = await apiClient.uploadAsset(file);
-                        console.log("[v0] Upload result:", result);
+                        console.log("[Assets] Upload result:", result);
+                        // Create object URL for demo mode preview
+                        const previewUrl = demoMode ? URL.createObjectURL(file) : apiClient.getAssetUrl(result.file_id);
                         const newAsset = {
                             fileId: result.file_id,
                             filename: result.filename,
                             uploadedAt: new Date(),
-                            thumbnail: apiClient.getAssetUrl(result.file_id),
+                            thumbnail: previewUrl,
                             type: "image"
                         };
                         toast({
@@ -849,11 +989,12 @@ function AssetsPage() {
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                                         children: [
                                             file.name,
-                                            " uploaded"
+                                            " uploaded ",
+                                            demoMode ? "(Demo Mode)" : ""
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                        lineNumber: 184,
+                                        lineNumber: 329,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -870,19 +1011,34 @@ function AssetsPage() {
                                         children: result.file_id
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                        lineNumber: 185,
+                                        lineNumber: 330,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                lineNumber: 183,
+                                lineNumber: 328,
                                 columnNumber: 15
                             }, this)
                         });
                         return newAsset;
                     } catch (error) {
-                        console.error("[v0] Upload failed:", error);
+                        console.error("[Assets] Upload failed:", error);
+                        // In demo mode, still create a mock asset
+                        if (demoMode) {
+                            const mockAsset = {
+                                fileId: `demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+                                filename: file.name,
+                                uploadedAt: new Date(),
+                                thumbnail: URL.createObjectURL(file),
+                                type: "image"
+                            };
+                            toast({
+                                title: "Upload Successful (Demo)",
+                                description: `${file.name} uploaded in demo mode`
+                            });
+                            return mockAsset;
+                        }
                         toast({
                             title: "Upload failed",
                             description: `Failed to upload ${file.name}: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -905,19 +1061,21 @@ function AssetsPage() {
             setUploading(false);
         }
     }["AssetsPage.useCallback[handleUpload]"], [
-        toast
+        toast,
+        apiClient,
+        demoMode
     ]);
     const handleRemoveBackground = async (fileId)=>{
         setProcessing(true);
         try {
-            console.log("[v0] Removing background for:", fileId);
+            console.log("[Assets] Removing background for:", fileId);
             const result = await apiClient.removeBackground(fileId);
-            console.log("[v0] Remove BG result:", result);
+            console.log("[Assets] Remove BG result:", result);
             const newAsset = {
                 fileId: result.new_file_id,
                 filename: "Background Removed",
                 uploadedAt: new Date(),
-                thumbnail: apiClient.getAssetUrl(result.new_file_id),
+                thumbnail: demoMode ? "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop" : apiClient.getAssetUrl(result.new_file_id),
                 type: "enhanced"
             };
             setAssets((prev)=>[
@@ -926,14 +1084,16 @@ function AssetsPage() {
                 ]);
             toast({
                 title: "Background removed",
-                description: "New asset created with transparent background"
+                description: `New asset created with transparent background ${demoMode ? "(Demo Mode)" : ""}`
             });
         } catch (error) {
-            toast({
-                title: "Processing failed",
-                description: error instanceof Error ? error.message : "Could not remove background",
-                variant: "destructive"
-            });
+            if (!demoMode) {
+                toast({
+                    title: "Processing failed",
+                    description: error instanceof Error ? error.message : "Could not remove background",
+                    variant: "destructive"
+                });
+            }
         } finally{
             setProcessing(false);
             setSelectedAsset(null);
@@ -947,7 +1107,7 @@ function AssetsPage() {
                 fileId: result.new_file_id,
                 filename: "Smart Enhanced",
                 uploadedAt: new Date(),
-                thumbnail: apiClient.getAssetUrl(result.new_file_id),
+                thumbnail: demoMode ? "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop" : apiClient.getAssetUrl(result.new_file_id),
                 type: "enhanced"
             };
             setAssets((prev)=>[
@@ -956,14 +1116,16 @@ function AssetsPage() {
                 ]);
             toast({
                 title: "Enhancement complete",
-                description: "Image enhanced with AI"
+                description: `Image enhanced with AI ${demoMode ? "(Demo Mode)" : ""}`
             });
         } catch (error) {
-            toast({
-                title: "Enhancement failed",
-                description: error instanceof Error ? error.message : "Could not enhance image",
-                variant: "destructive"
-            });
+            if (!demoMode) {
+                toast({
+                    title: "Enhancement failed",
+                    description: error instanceof Error ? error.message : "Could not enhance image",
+                    variant: "destructive"
+                });
+            }
         } finally{
             setProcessing(false);
             setSelectedAsset(null);
@@ -977,7 +1139,7 @@ function AssetsPage() {
                 fileId: result.new_file_id,
                 filename: `Cropped (${mode})`,
                 uploadedAt: new Date(),
-                thumbnail: apiClient.getAssetUrl(result.new_file_id),
+                thumbnail: demoMode ? "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=400&fit=crop" : apiClient.getAssetUrl(result.new_file_id),
                 type: "cropped"
             };
             setAssets((prev)=>[
@@ -986,14 +1148,16 @@ function AssetsPage() {
                 ]);
             toast({
                 title: "Crop complete",
-                description: `Image cropped to ${mode} format`
+                description: `Image cropped to ${mode} format ${demoMode ? "(Demo Mode)" : ""}`
             });
         } catch (error) {
-            toast({
-                title: "Crop failed",
-                description: error instanceof Error ? error.message : "Could not crop image. This feature may not be available on your backend yet.",
-                variant: "destructive"
-            });
+            if (!demoMode) {
+                toast({
+                    title: "Crop failed",
+                    description: error instanceof Error ? error.message : "Could not crop image. This feature may not be available on your backend yet.",
+                    variant: "destructive"
+                });
+            }
         } finally{
             setProcessing(false);
             setSelectedAsset(null);
@@ -1006,14 +1170,16 @@ function AssetsPage() {
             setSelectedAsset(null);
             toast({
                 title: "Asset deleted",
-                description: "Asset removed from library"
+                description: `Asset removed from library ${demoMode ? "(Demo Mode)" : ""}`
             });
         } catch (error) {
-            toast({
-                title: "Delete failed",
-                description: error instanceof Error ? error.message : "Could not delete asset",
-                variant: "destructive"
-            });
+            if (!demoMode) {
+                toast({
+                    title: "Delete failed",
+                    description: error instanceof Error ? error.message : "Could not delete asset",
+                    variant: "destructive"
+                });
+            }
         }
     };
     const filteredAssets = assets.filter((asset)=>asset.filename.toLowerCase().includes(searchQuery.toLowerCase()));
@@ -1032,21 +1198,30 @@ function AssetsPage() {
                                     children: "Asset Library"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 339,
+                                    lineNumber: 511,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
                                     className: "text-muted-foreground",
-                                    children: "Manage and enhance your product images with AI"
-                                }, void 0, false, {
+                                    children: [
+                                        "Manage and enhance your product images with AI",
+                                        demoMode && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("span", {
+                                            className: "ml-2 text-chart-3 font-medium"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/(dashboard)/assets/page.tsx",
+                                            lineNumber: 514,
+                                            columnNumber: 28
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 340,
+                                    lineNumber: 512,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                            lineNumber: 338,
+                            lineNumber: 510,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1060,14 +1235,14 @@ function AssetsPage() {
                                             className: "mr-2 h-4 w-4"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                            lineNumber: 350,
+                                            lineNumber: 523,
                                             columnNumber: 15
                                         }, this),
                                         uploading ? "Uploading..." : "Upload Assets"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 345,
+                                    lineNumber: 518,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1079,19 +1254,19 @@ function AssetsPage() {
                                     onChange: (e)=>handleUpload(e.target.files)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 353,
+                                    lineNumber: 526,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                            lineNumber: 344,
+                            lineNumber: 517,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                    lineNumber: 337,
+                    lineNumber: 509,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1104,7 +1279,7 @@ function AssetsPage() {
                                     className: "absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 367,
+                                    lineNumber: 542,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Input"], {
@@ -1114,13 +1289,13 @@ function AssetsPage() {
                                     onChange: (e)=>setSearchQuery(e.target.value)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 368,
+                                    lineNumber: 543,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                            lineNumber: 366,
+                            lineNumber: 541,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1131,20 +1306,20 @@ function AssetsPage() {
                                     className: "mr-2 h-4 w-4"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 376,
+                                    lineNumber: 551,
                                     columnNumber: 13
                                 }, this),
                                 "Filter"
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                            lineNumber: 375,
+                            lineNumber: 550,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                    lineNumber: 365,
+                    lineNumber: 540,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1156,12 +1331,12 @@ function AssetsPage() {
                             children: "Loading assets..."
                         }, void 0, false, {
                             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                            lineNumber: 385,
+                            lineNumber: 560,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                        lineNumber: 384,
+                        lineNumber: 559,
                         columnNumber: 13
                     }, this) : assets.length === 0 ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Card"], {
                         className: "border-dashed",
@@ -1174,12 +1349,12 @@ function AssetsPage() {
                                         className: "h-8 w-8 text-muted-foreground"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                        lineNumber: 391,
+                                        lineNumber: 566,
                                         columnNumber: 19
                                     }, this)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 390,
+                                    lineNumber: 565,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("h3", {
@@ -1187,7 +1362,7 @@ function AssetsPage() {
                                     children: "No assets yet"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 393,
+                                    lineNumber: 568,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1195,7 +1370,7 @@ function AssetsPage() {
                                     children: "Upload your first product images to unlock AI-powered enhancements and smart cropping"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 394,
+                                    lineNumber: 569,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1205,14 +1380,14 @@ function AssetsPage() {
                                             className: "mr-2 h-4 w-4"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                            lineNumber: 399,
+                                            lineNumber: 574,
                                             columnNumber: 19
                                         }, this),
                                         "Upload Your First Asset"
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 398,
+                                    lineNumber: 573,
                                     columnNumber: 17
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("input", {
@@ -1224,18 +1399,18 @@ function AssetsPage() {
                                     onChange: (e)=>handleUpload(e.target.files)
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 402,
+                                    lineNumber: 577,
                                     columnNumber: 17
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                            lineNumber: 389,
+                            lineNumber: 564,
                             columnNumber: 15
                         }, this)
                     }, void 0, false, {
                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                        lineNumber: 388,
+                        lineNumber: 563,
                         columnNumber: 13
                     }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                         className: "grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4",
@@ -1254,7 +1429,7 @@ function AssetsPage() {
                                                     className: "w-full h-full object-cover"
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                    lineNumber: 422,
+                                                    lineNumber: 597,
                                                     columnNumber: 23
                                                 }, this),
                                                 asset.type !== "image" && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Badge"], {
@@ -1262,13 +1437,13 @@ function AssetsPage() {
                                                     children: asset.type
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                    lineNumber: 428,
+                                                    lineNumber: 603,
                                                     columnNumber: 25
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                            lineNumber: 421,
+                                            lineNumber: 596,
                                             columnNumber: 21
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1279,7 +1454,7 @@ function AssetsPage() {
                                                     children: asset.filename
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                    lineNumber: 434,
+                                                    lineNumber: 609,
                                                     columnNumber: 23
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1287,34 +1462,34 @@ function AssetsPage() {
                                                     children: asset.uploadedAt.toLocaleDateString()
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                    lineNumber: 435,
+                                                    lineNumber: 610,
                                                     columnNumber: 23
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                            lineNumber: 433,
+                                            lineNumber: 608,
                                             columnNumber: 21
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                    lineNumber: 420,
+                                    lineNumber: 595,
                                     columnNumber: 19
                                 }, this)
                             }, asset.fileId, false, {
                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                lineNumber: 415,
+                                lineNumber: 590,
                                 columnNumber: 17
                             }, this))
                     }, void 0, false, {
                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                        lineNumber: 413,
+                        lineNumber: 588,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                    lineNumber: 382,
+                    lineNumber: 557,
                     columnNumber: 9
                 }, this),
                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -1329,7 +1504,7 @@ function AssetsPage() {
                                         children: selectedAsset?.filename
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                        lineNumber: 450,
+                                        lineNumber: 625,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogDescription"], {
@@ -1339,13 +1514,13 @@ function AssetsPage() {
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                        lineNumber: 451,
+                                        lineNumber: 626,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                lineNumber: 449,
+                                lineNumber: 624,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1359,12 +1534,12 @@ function AssetsPage() {
                                             className: "w-full h-full object-contain"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                            lineNumber: 458,
+                                            lineNumber: 633,
                                             columnNumber: 17
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                        lineNumber: 457,
+                                        lineNumber: 632,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1377,7 +1552,7 @@ function AssetsPage() {
                                                         children: "File ID"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                        lineNumber: 467,
+                                                        lineNumber: 642,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1397,26 +1572,26 @@ function AssetsPage() {
                                                                 children: selectedAsset?.fileId
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                lineNumber: 480,
+                                                                lineNumber: 655,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$copy$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Copy$3e$__["Copy"], {
                                                                 className: "h-3 w-3 ml-2 flex-shrink-0"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                lineNumber: 481,
+                                                                lineNumber: 656,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                        lineNumber: 468,
+                                                        lineNumber: 643,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                lineNumber: 466,
+                                                lineNumber: 641,
                                                 columnNumber: 17
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1432,14 +1607,14 @@ function AssetsPage() {
                                                                 className: "mr-2 h-4 w-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                lineNumber: 494,
+                                                                lineNumber: 669,
                                                                 columnNumber: 21
                                                             }, this),
-                                                            "Remove BG"
+                                                            processing ? "Processing..." : "Remove BG"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                        lineNumber: 486,
+                                                        lineNumber: 661,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1452,14 +1627,14 @@ function AssetsPage() {
                                                                 className: "mr-2 h-4 w-4"
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                lineNumber: 504,
+                                                                lineNumber: 679,
                                                                 columnNumber: 21
                                                             }, this),
-                                                            "Enhance"
+                                                            processing ? "Processing..." : "Enhance"
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                        lineNumber: 498,
+                                                        lineNumber: 673,
                                                         columnNumber: 19
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dropdown$2d$menu$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DropdownMenu"], {
@@ -1469,24 +1644,25 @@ function AssetsPage() {
                                                                 children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
                                                                     className: "w-full justify-start",
                                                                     variant: "outline",
+                                                                    disabled: processing,
                                                                     children: [
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$scissors$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__$3c$export__default__as__Scissors$3e$__["Scissors"], {
                                                                             className: "mr-2 h-4 w-4"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                            lineNumber: 511,
+                                                                            lineNumber: 686,
                                                                             columnNumber: 25
                                                                         }, this),
                                                                         "Smart Crop"
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                    lineNumber: 510,
+                                                                    lineNumber: 685,
                                                                     columnNumber: 23
                                                                 }, this)
                                                             }, void 0, false, {
                                                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                lineNumber: 509,
+                                                                lineNumber: 684,
                                                                 columnNumber: 21
                                                             }, this),
                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dropdown$2d$menu$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DropdownMenuContent"], {
@@ -1497,12 +1673,12 @@ function AssetsPage() {
                                                                         children: "Crop Format"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                        lineNumber: 516,
+                                                                        lineNumber: 691,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dropdown$2d$menu$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DropdownMenuSeparator"], {}, void 0, false, {
                                                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                        lineNumber: 517,
+                                                                        lineNumber: 692,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dropdown$2d$menu$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DropdownMenuItem"], {
@@ -1510,7 +1686,7 @@ function AssetsPage() {
                                                                         children: "Square (1:1)"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                        lineNumber: 518,
+                                                                        lineNumber: 693,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dropdown$2d$menu$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DropdownMenuItem"], {
@@ -1518,7 +1694,7 @@ function AssetsPage() {
                                                                         children: "Portrait (4:5)"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                        lineNumber: 525,
+                                                                        lineNumber: 700,
                                                                         columnNumber: 23
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dropdown$2d$menu$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DropdownMenuItem"], {
@@ -1526,37 +1702,37 @@ function AssetsPage() {
                                                                         children: "Landscape (16:9)"
                                                                     }, void 0, false, {
                                                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                        lineNumber: 532,
+                                                                        lineNumber: 707,
                                                                         columnNumber: 23
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                                lineNumber: 515,
+                                                                lineNumber: 690,
                                                                 columnNumber: 21
                                                             }, this)
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                        lineNumber: 508,
+                                                        lineNumber: 683,
                                                         columnNumber: 19
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                lineNumber: 485,
+                                                lineNumber: 660,
                                                 columnNumber: 17
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                        lineNumber: 465,
+                                        lineNumber: 640,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                lineNumber: 456,
+                                lineNumber: 631,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["DialogFooter"], {
@@ -1569,14 +1745,14 @@ function AssetsPage() {
                                                 className: "mr-2 h-4 w-4"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                                lineNumber: 550,
+                                                lineNumber: 725,
                                                 columnNumber: 17
                                             }, this),
                                             "Delete"
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                        lineNumber: 546,
+                                        lineNumber: 721,
                                         columnNumber: 15
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$compiled$2f$react$2f$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$client$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$client$5d$__$28$ecmascript$29$__["Button"], {
@@ -1585,39 +1761,39 @@ function AssetsPage() {
                                         children: "Close"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                        lineNumber: 553,
+                                        lineNumber: 728,
                                         columnNumber: 15
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                                lineNumber: 545,
+                                lineNumber: 720,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                        lineNumber: 448,
+                        lineNumber: 623,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/(dashboard)/assets/page.tsx",
-                    lineNumber: 447,
+                    lineNumber: 622,
                     columnNumber: 9
                 }, this)
             ]
         }, void 0, true, {
             fileName: "[project]/app/(dashboard)/assets/page.tsx",
-            lineNumber: 335,
+            lineNumber: 507,
             columnNumber: 7
         }, this)
     }, void 0, false, {
         fileName: "[project]/app/(dashboard)/assets/page.tsx",
-        lineNumber: 334,
+        lineNumber: 506,
         columnNumber: 5
     }, this);
 }
-_s(AssetsPage, "c8R5dC7ujNdD8meLWiH7oIEHQuU=", false, function() {
+_s(AssetsPage, "ZWn+LmYg3d+VL2Bn/pHP2La2hn0=", false, function() {
     return [
         __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$use$2d$toast$2e$ts__$5b$app$2d$client$5d$__$28$ecmascript$29$__["useToast"]
     ];

@@ -26,7 +26,103 @@ import { useToast } from "@/hooks/use-toast"
 // API Client Configuration
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
 
-const apiClient = {
+// Demo Mode Mock Data
+const generateMockAssets = (): Asset[] => [
+  {
+    fileId: "demo_asset_1",
+    filename: "Product Photo 1.jpg",
+    uploadedAt: new Date(Date.now() - 86400000 * 2),
+    thumbnail: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
+    type: "image",
+  },
+  {
+    fileId: "demo_asset_2",
+    filename: "Enhanced Product.jpg",
+    uploadedAt: new Date(Date.now() - 86400000),
+    thumbnail: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop",
+    type: "enhanced",
+  },
+  {
+    fileId: "demo_asset_3",
+    filename: "Cropped Square.jpg",
+    uploadedAt: new Date(Date.now() - 3600000),
+    thumbnail: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
+    type: "cropped",
+  },
+  {
+    fileId: "demo_asset_4",
+    filename: "Watch Collection.jpg",
+    uploadedAt: new Date(Date.now() - 7200000),
+    thumbnail: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=400&fit=crop",
+    type: "image",
+  },
+  {
+    fileId: "demo_asset_5",
+    filename: "Headphones Pro.jpg",
+    uploadedAt: new Date(Date.now() - 10800000),
+    thumbnail: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
+    type: "image",
+  },
+]
+
+const mockApiClient = {
+  uploadAsset: async (file: File): Promise<any> => {
+    await new Promise(resolve => setTimeout(resolve, 1000))
+    const fileId = `demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`
+    return {
+      file_id: fileId,
+      filename: file.name,
+    }
+  },
+  
+  listAssets: async (): Promise<any> => {
+    await new Promise(resolve => setTimeout(resolve, 500))
+    return generateMockAssets()
+  },
+  
+  removeBackground: async (fileId: string): Promise<any> => {
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    return {
+      new_file_id: `demo_nobg_${Date.now()}`,
+      message: "Background removed successfully",
+    }
+  },
+  
+  smartEnhance: async (fileId: string, sharpness: number, contrast: number, brightness: number): Promise<any> => {
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    return {
+      new_file_id: `demo_enhanced_${Date.now()}`,
+      message: "Image enhanced successfully",
+    }
+  },
+  
+  smartCrop: async (fileId: string, mode: string): Promise<any> => {
+    await new Promise(resolve => setTimeout(resolve, 1200))
+    return {
+      new_file_id: `demo_cropped_${mode}_${Date.now()}`,
+      message: `Image cropped to ${mode} format`,
+    }
+  },
+  
+  deleteAsset: async (fileId: string): Promise<any> => {
+    await new Promise(resolve => setTimeout(resolve, 300))
+    return { success: true }
+  },
+  
+  getAssetUrl: (fileId: string): string => {
+    // Return placeholder images for demo mode
+    const demoUrls: { [key: string]: string } = {
+      demo_asset_1: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
+      demo_asset_2: "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop",
+      demo_asset_3: "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop",
+      demo_asset_4: "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=400&fit=crop",
+      demo_asset_5: "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop",
+    }
+    return demoUrls[fileId] || "https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop"
+  },
+}
+
+const realApiClient = {
   uploadAsset: async (file: File) => {
     const formData = new FormData()
     formData.append("file", file)
@@ -117,34 +213,80 @@ export default function AssetsPage() {
   const [loading, setLoading] = useState(true)
   const [processing, setProcessing] = useState(false)
   const [searchQuery, setSearchQuery] = useState("")
+  const [demoMode, setDemoMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("demo_mode") === "true"
+    }
+    return false
+  })
   const fileInputRef = useRef<HTMLInputElement>(null)
   const emptyStateInputRef = useRef<HTMLInputElement>(null)
   const { toast } = useToast()
 
-  // Load assets on mount
+  // Get the appropriate API client based on demo mode
+  const apiClient = demoMode ? mockApiClient : realApiClient
+
+  // Check demo mode from localStorage and update if needed
   useEffect(() => {
-    loadAssets()
+    if (typeof window !== "undefined") {
+      const isDemoMode = localStorage.getItem("demo_mode") === "true"
+      if (isDemoMode !== demoMode) {
+        setDemoMode(isDemoMode)
+      }
+      console.log("[Assets] Demo mode initialized:", isDemoMode)
+    }
   }, [])
 
+  // Load assets on mount or when demo mode changes
+  useEffect(() => {
+    loadAssets()
+  }, [demoMode])
+
   const loadAssets = async () => {
+    // In demo mode, don't make the API call at all - just use mock data
+    if (demoMode) {
+      try {
+        setLoading(true)
+        const result = await mockApiClient.listAssets()
+        console.log("[Assets] Demo assets loaded:", result)
+        
+        const loadedAssets: Asset[] = result.map((asset: any) => ({
+          fileId: asset.fileId,
+          filename: asset.filename,
+          uploadedAt: asset.uploadedAt,
+          thumbnail: asset.thumbnail,
+          type: asset.type,
+        }))
+        
+        setAssets(loadedAssets)
+      } catch (error) {
+        console.log("[Assets] Demo mode error (ignored):", error)
+        setAssets([])
+      } finally {
+        setLoading(false)
+      }
+      return
+    }
+
+    // Real backend mode
     try {
       setLoading(true)
-      const result = await apiClient.listAssets()
-      console.log("[v0] Assets loaded:", result)
+      const result = await realApiClient.listAssets()
+      console.log("[Assets] Assets loaded:", result)
       
       // Check if result is an array or has an assets property
       let assetsData = Array.isArray(result) ? result : result.assets || []
       
       // Transform the response to match our Asset interface
       const loadedAssets: Asset[] = assetsData.map((asset: any) => ({
-        fileId: asset.file_id || asset._id || asset.fileId,
+        fileId: asset.fileId || asset.file_id || asset._id,
         filename: asset.filename || "Unnamed Asset",
-        uploadedAt: new Date(asset.uploaded_at || asset.uploadedAt || Date.now()),
-        thumbnail: apiClient.getAssetUrl(asset.file_id || asset._id || asset.fileId),
+        uploadedAt: new Date(asset.uploadedAt || asset.uploaded_at || Date.now()),
+        thumbnail: asset.thumbnail || realApiClient.getAssetUrl(asset.fileId || asset.file_id || asset._id),
         type: asset.type || "image",
       }))
       
-      console.log("[v0] Transformed assets:", loadedAssets)
+      console.log("[Assets] Transformed assets:", loadedAssets)
       setAssets(loadedAssets)
     } catch (error) {
       console.error("Failed to load assets:", error)
@@ -165,15 +307,18 @@ export default function AssetsPage() {
       setUploading(true)
       const uploadPromises = Array.from(files).map(async (file) => {
         try {
-          console.log("[v0] Uploading file:", file.name)
+          console.log("[Assets] Uploading file:", file.name)
           const result = await apiClient.uploadAsset(file)
-          console.log("[v0] Upload result:", result)
+          console.log("[Assets] Upload result:", result)
+
+          // Create object URL for demo mode preview
+          const previewUrl = demoMode ? URL.createObjectURL(file) : apiClient.getAssetUrl(result.file_id)
 
           const newAsset: Asset = {
             fileId: result.file_id,
             filename: result.filename,
             uploadedAt: new Date(),
-            thumbnail: apiClient.getAssetUrl(result.file_id),
+            thumbnail: previewUrl,
             type: "image",
           }
 
@@ -181,7 +326,7 @@ export default function AssetsPage() {
             title: "Upload Successful",
             description: (
               <div className="space-y-2">
-                <div>{file.name} uploaded</div>
+                <div>{file.name} uploaded {demoMode ? "(Demo Mode)" : ""}</div>
                 <div
                   className="text-xs font-mono bg-muted p-2 rounded cursor-pointer hover:bg-muted/80"
                   onClick={() => {
@@ -200,7 +345,26 @@ export default function AssetsPage() {
 
           return newAsset
         } catch (error) {
-          console.error("[v0] Upload failed:", error)
+          console.error("[Assets] Upload failed:", error)
+          
+          // In demo mode, still create a mock asset
+          if (demoMode) {
+            const mockAsset: Asset = {
+              fileId: `demo_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`,
+              filename: file.name,
+              uploadedAt: new Date(),
+              thumbnail: URL.createObjectURL(file),
+              type: "image",
+            }
+            
+            toast({
+              title: "Upload Successful (Demo)",
+              description: `${file.name} uploaded in demo mode`,
+            })
+            
+            return mockAsset
+          }
+          
           toast({
             title: "Upload failed",
             description: `Failed to upload ${file.name}: ${error instanceof Error ? error.message : "Unknown error"}`,
@@ -215,35 +379,37 @@ export default function AssetsPage() {
       setAssets((prev) => [...successfulUploads, ...prev])
       setUploading(false)
     },
-    [toast]
+    [toast, apiClient, demoMode]
   )
 
   const handleRemoveBackground = async (fileId: string) => {
     setProcessing(true)
     try {
-      console.log("[v0] Removing background for:", fileId)
+      console.log("[Assets] Removing background for:", fileId)
       const result = await apiClient.removeBackground(fileId)
-      console.log("[v0] Remove BG result:", result)
+      console.log("[Assets] Remove BG result:", result)
 
       const newAsset: Asset = {
         fileId: result.new_file_id,
         filename: "Background Removed",
         uploadedAt: new Date(),
-        thumbnail: apiClient.getAssetUrl(result.new_file_id),
+        thumbnail: demoMode ? "https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop" : apiClient.getAssetUrl(result.new_file_id),
         type: "enhanced",
       }
 
       setAssets((prev) => [newAsset, ...prev])
       toast({
         title: "Background removed",
-        description: "New asset created with transparent background",
+        description: `New asset created with transparent background ${demoMode ? "(Demo Mode)" : ""}`,
       })
     } catch (error) {
-      toast({
-        title: "Processing failed",
-        description: error instanceof Error ? error.message : "Could not remove background",
-        variant: "destructive",
-      })
+      if (!demoMode) {
+        toast({
+          title: "Processing failed",
+          description: error instanceof Error ? error.message : "Could not remove background",
+          variant: "destructive",
+        })
+      }
     } finally {
       setProcessing(false)
       setSelectedAsset(null)
@@ -258,21 +424,23 @@ export default function AssetsPage() {
         fileId: result.new_file_id,
         filename: "Smart Enhanced",
         uploadedAt: new Date(),
-        thumbnail: apiClient.getAssetUrl(result.new_file_id),
+        thumbnail: demoMode ? "https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop" : apiClient.getAssetUrl(result.new_file_id),
         type: "enhanced",
       }
 
       setAssets((prev) => [newAsset, ...prev])
       toast({
         title: "Enhancement complete",
-        description: "Image enhanced with AI",
+        description: `Image enhanced with AI ${demoMode ? "(Demo Mode)" : ""}`,
       })
     } catch (error) {
-      toast({
-        title: "Enhancement failed",
-        description: error instanceof Error ? error.message : "Could not enhance image",
-        variant: "destructive",
-      })
+      if (!demoMode) {
+        toast({
+          title: "Enhancement failed",
+          description: error instanceof Error ? error.message : "Could not enhance image",
+          variant: "destructive",
+        })
+      }
     } finally {
       setProcessing(false)
       setSelectedAsset(null)
@@ -287,21 +455,23 @@ export default function AssetsPage() {
         fileId: result.new_file_id,
         filename: `Cropped (${mode})`,
         uploadedAt: new Date(),
-        thumbnail: apiClient.getAssetUrl(result.new_file_id),
+        thumbnail: demoMode ? "https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=400&fit=crop" : apiClient.getAssetUrl(result.new_file_id),
         type: "cropped",
       }
 
       setAssets((prev) => [newAsset, ...prev])
       toast({
         title: "Crop complete",
-        description: `Image cropped to ${mode} format`,
+        description: `Image cropped to ${mode} format ${demoMode ? "(Demo Mode)" : ""}`,
       })
     } catch (error) {
-      toast({
-        title: "Crop failed",
-        description: error instanceof Error ? error.message : "Could not crop image. This feature may not be available on your backend yet.",
-        variant: "destructive",
-      })
+      if (!demoMode) {
+        toast({
+          title: "Crop failed",
+          description: error instanceof Error ? error.message : "Could not crop image. This feature may not be available on your backend yet.",
+          variant: "destructive",
+        })
+      }
     } finally {
       setProcessing(false)
       setSelectedAsset(null)
@@ -315,14 +485,16 @@ export default function AssetsPage() {
       setSelectedAsset(null)
       toast({
         title: "Asset deleted",
-        description: "Asset removed from library",
+        description: `Asset removed from library ${demoMode ? "(Demo Mode)" : ""}`,
       })
     } catch (error) {
-      toast({
-        title: "Delete failed",
-        description: error instanceof Error ? error.message : "Could not delete asset",
-        variant: "destructive",
-      })
+      if (!demoMode) {
+        toast({
+          title: "Delete failed",
+          description: error instanceof Error ? error.message : "Could not delete asset",
+          variant: "destructive",
+        })
+      }
     }
   }
 
@@ -339,6 +511,7 @@ export default function AssetsPage() {
             <h1 className="text-3xl font-bold tracking-tight">Asset Library</h1>
             <p className="text-muted-foreground">
               Manage and enhance your product images with AI
+              {demoMode && <span className="ml-2 text-chart-3 font-medium"></span>}
             </p>
           </div>
           <div>
@@ -360,6 +533,8 @@ export default function AssetsPage() {
             />
           </div>
         </div>
+
+        
 
         {/* Toolbar */}
         <div className="flex items-center gap-4">
@@ -492,7 +667,7 @@ export default function AssetsPage() {
                     disabled={processing}
                   >
                     <Wand2 className="mr-2 h-4 w-4" />
-                    Remove BG
+                    {processing ? "Processing..." : "Remove BG"}
                   </Button>
 
                   <Button
@@ -502,12 +677,12 @@ export default function AssetsPage() {
                     disabled={processing}
                   >
                     <Wand2 className="mr-2 h-4 w-4" />
-                    Enhance
+                    {processing ? "Processing..." : "Enhance"}
                   </Button>
 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button className="w-full justify-start" variant="outline">
+                      <Button className="w-full justify-start" variant="outline" disabled={processing}>
                         <Scissors className="mr-2 h-4 w-4" />
                         Smart Crop
                       </Button>

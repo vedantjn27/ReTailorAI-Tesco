@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
-import { Plus, TrendingUp, ImageIcon, Sparkles, Clock, FolderKanban, ArrowUpRight } from "lucide-react"
+import { Plus, TrendingUp, Image, Sparkles, Clock, FolderKanban, ArrowUpRight } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
@@ -19,8 +19,54 @@ interface SavedProject {
   progress: number
 }
 
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+
 export default function DashboardPage() {
   const [recentProjects, setRecentProjects] = useState<SavedProject[]>([])
+  const [demoMode, setDemoMode] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("demo_mode") === "true"
+    }
+    return false
+  })
+
+  // Check backend connection and auto-manage demo mode
+  useEffect(() => {
+    const checkBackendConnection = async () => {
+      try {
+        const response = await fetch(`${API_BASE_URL}/`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          signal: AbortSignal.timeout(3000)
+        })
+        
+        if (response.ok) {
+          // Backend is connected, disable demo mode
+          if (demoMode) {
+            console.log('[Dashboard] Backend connected - disabling demo mode')
+            setDemoMode(false)
+            localStorage.setItem("demo_mode", "false")
+          }
+        } else {
+          // Backend not reachable, enable demo mode
+          if (!demoMode) {
+            console.log('[Dashboard] Backend not connected - enabling demo mode')
+            setDemoMode(true)
+            localStorage.setItem("demo_mode", "true")
+          }
+        }
+      } catch (error) {
+        // Backend not reachable, enable demo mode
+        if (!demoMode) {
+          console.log('[Dashboard] Backend error - enabling demo mode')
+          setDemoMode(true)
+          localStorage.setItem("demo_mode", "true")
+        }
+      }
+    }
+
+    checkBackendConnection()
+  }, [])
 
   useEffect(() => {
     const loadProjects = () => {
@@ -67,7 +113,7 @@ export default function DashboardPage() {
     {
       title: "Upload Assets",
       description: "Add product images",
-      icon: ImageIcon,
+      icon: Image,
       href: "/assets",
       gradient: "from-chart-2 to-chart-1",
     },
@@ -143,7 +189,7 @@ export default function DashboardPage() {
             <Card className="border-l-4 border-l-chart-2">
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Assets</CardTitle>
-                <ImageIcon className="h-4 w-4 text-chart-2" />
+                <Image className="h-4 w-4 text-chart-2" />
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{stats.totalAssets}</div>
@@ -288,7 +334,7 @@ export default function DashboardPage() {
                           />
                         ) : (
                           <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
-                            <ImageIcon className="h-12 w-12 text-muted-foreground" />
+                            <Image className="h-12 w-12 text-muted-foreground" />
                           </div>
                         )}
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
