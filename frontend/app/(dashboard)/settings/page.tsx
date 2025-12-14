@@ -18,6 +18,8 @@ export default function SettingsPage() {
   const [apiUrl, setApiUrl] = useState(process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000")
   const [autoSave, setAutoSave] = useState(true)
   const [notifications, setNotifications] = useState(true)
+  const [backendConnected, setBackendConnected] = useState(false)
+  const [checkingConnection, setCheckingConnection] = useState(true)
   const [demoMode, setDemoMode] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("demo_mode") === "true"
@@ -30,6 +32,44 @@ export default function SettingsPage() {
     }
     return "dark"
   })
+
+  // Check backend connection on mount
+  useEffect(() => {
+    const checkBackendConnection = async () => {
+      setCheckingConnection(true)
+      try {
+        const response = await fetch(`${apiUrl}/health`, {
+          method: 'GET',
+          headers: { 'Content-Type': 'application/json' },
+          signal: AbortSignal.timeout(5000) // 5 second timeout
+        })
+        
+        if (response.ok) {
+          setBackendConnected(true)
+          // If backend is connected and demo mode is on, optionally turn it off
+          // Uncomment the next line if you want to auto-disable demo mode when backend connects
+          // if (demoMode) handleDemoModeToggle(false)
+        } else {
+          setBackendConnected(false)
+          // Auto-enable demo mode if backend is not connected
+          if (!demoMode) {
+            handleDemoModeToggle(true)
+          }
+        }
+      } catch (error) {
+        console.log('Backend not connected:', error)
+        setBackendConnected(false)
+        // Auto-enable demo mode if backend is not connected
+        if (!demoMode) {
+          handleDemoModeToggle(true)
+        }
+      } finally {
+        setCheckingConnection(false)
+      }
+    }
+
+    checkBackendConnection()
+  }, [apiUrl])
 
   useEffect(() => {
     const root = document.documentElement
@@ -68,6 +108,39 @@ export default function SettingsPage() {
       title: enabled ? "Demo Mode Enabled" : "Demo Mode Disabled",
       description: enabled ? "All features now work offline with mock data" : "Connected back to live backend",
     })
+  }
+
+  const handleTestConnection = async () => {
+    setCheckingConnection(true)
+    try {
+      const response = await fetch(`${apiUrl}/health`, {
+        method: 'GET',
+        headers: { 'Content-Type': 'application/json' },
+        signal: AbortSignal.timeout(5000)
+      })
+      
+      if (response.ok) {
+        setBackendConnected(true)
+        toast({
+          title: "Connection Successful",
+          description: "Backend server is reachable",
+        })
+      } else {
+        throw new Error('Backend not reachable')
+      }
+    } catch (error) {
+      setBackendConnected(false)
+      toast({
+        title: "Connection Failed",
+        description: "Could not reach backend server. Demo mode enabled.",
+        variant: "destructive"
+      })
+      if (!demoMode) {
+        handleDemoModeToggle(true)
+      }
+    } finally {
+      setCheckingConnection(false)
+    }
   }
 
   return (
@@ -189,9 +262,22 @@ export default function SettingsPage() {
                   </div>
                   {demoMode && (
                     <div className="rounded-lg border border-chart-3/50 bg-chart-3/10 p-4">
-                      <p className="text-sm font-medium text-chart-3">Demo Mode Active</p>
+                      <p className="text-sm font-medium text-chart-3">
+                        {backendConnected ? "Demo Mode Active (Manual)" : "Demo Mode Active (Auto-enabled)"}
+                      </p>
                       <p className="mt-1 text-sm text-muted-foreground">
-                        All API calls are mocked. No backend server required. All features work with sample data.
+                        {backendConnected 
+                          ? "Demo mode is manually enabled. Backend is available but not being used."
+                          : "Backend server not detected. All API calls are mocked with sample data."
+                        }
+                      </p>
+                    </div>
+                  )}
+                  {!backendConnected && !checkingConnection && (
+                    <div className="rounded-lg border border-warning/50 bg-warning/10 p-4">
+                      <p className="text-sm font-medium text-warning">Backend Server Disconnected</p>
+                      <p className="mt-1 text-sm text-muted-foreground">
+                        Demo mode automatically enabled. Connect your backend server to use live data.
                       </p>
                     </div>
                   )}
@@ -222,14 +308,28 @@ export default function SettingsPage() {
                     </p>
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="mongodb-uri">MongoDB Connection Status</Label>
+                    <Label htmlFor="backend-status">Backend Connection Status</Label>
                     <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
-                      <span className="text-sm text-muted-foreground">Connected to MongoDB</span>
+                      {checkingConnection ? (
+                        <>
+                          <div className="h-2 w-2 rounded-full bg-muted-foreground animate-pulse" />
+                          <span className="text-sm text-muted-foreground">Checking connection...</span>
+                        </>
+                      ) : backendConnected ? (
+                        <>
+                          <div className="h-2 w-2 rounded-full bg-success animate-pulse" />
+                          <span className="text-sm text-success">Connected to backend server</span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="h-2 w-2 rounded-full bg-destructive" />
+                          <span className="text-sm text-destructive">Backend server not reachable</span>
+                        </>
+                      )}
                     </div>
                   </div>
-                  <Button onClick={handleSave} variant="outline">
-                    Test Connection
+                  <Button onClick={handleTestConnection} variant="outline" disabled={checkingConnection}>
+                    {checkingConnection ? "Testing..." : "Test Connection"}
                   </Button>
                 </CardContent>
               </Card>
