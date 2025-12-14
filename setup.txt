@@ -59,3 +59,20 @@ To stop the backend server, press CTRL + C in the terminal running Uvicorn.
 You can safely delete any asset using the /asset/{file_id} DELETE route, which removes the file from GridFS and your processed folder.
 
 The backend is now fully configured and ready for integration with your frontend or mobile app.
+
+#FRONTEND SETUP
+
+Every feature you implemented in FastAPI is accessible through a beautiful, professional UI. The application is production-ready with proper error handling, loading states, and user feedback throughout.
+
+Import or download or clone the frontend folder from the given git repository
+do "cd frontend" in the terminal and then "npm install" to install all dependencies
+
+**Next Steps**:
+1. Start your FastAPI backend: `uvicorn main:app --reload`
+2. Start the Next.js frontend: `npm run dev`
+3. Visit `http://localhost:3000`
+4. Upload assets, create projects, and explore all features!
+
+All buttons, forms, and interactions properly trigger your backend endpoints and handle responses correctly.
+
+You can also see or work with the demo through deployed link : re-tailor-ai-tesco.vercel.app or the provided QR code 
