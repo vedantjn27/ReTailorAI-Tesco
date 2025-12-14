@@ -153,7 +153,68 @@ def delete_asset(file_id: str):
         return {"status": "deleted", "file_id": file_id}
     except Exception:
         raise HTTPException(status_code=404, detail="Cannot delete file")
-
+    
+# 6. Crop Asset
+@app.get("/crop/{file_id}")
+def crop_image(file_id: str, mode: str = "square"):
+    try:
+        file_obj = fs.get(ObjectId(file_id))
+        img = Image.open(io.BytesIO(file_obj.read()))
+        
+        # Crop logic based on mode
+        width, height = img.size
+        if mode == "square":
+            size = min(width, height)
+            img = ImageOps.fit(img, (size, size), Image.LANCZOS)
+        elif mode == "portrait":
+            # 4:5 ratio
+            target_width = int(height * 4 / 5)
+            img = ImageOps.fit(img, (target_width, height), Image.LANCZOS)
+        elif mode == "landscape":
+            # 16:9 ratio
+            target_height = int(width * 9 / 16)
+            img = ImageOps.fit(img, (width, target_height), Image.LANCZOS)
+        
+        buffer = pil_to_bytes(img)
+        new_file_id = fs.put(buffer.getvalue(), filename=f"{file_id}_cropped_{mode}.png", content_type="image/png")
+        
+        return {
+            "status": "success",
+            "operation": f"cropped_{mode}",
+            "new_file_id": str(new_file_id)
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Crop failed: {str(e)}")
+    
+# 7. Get A list of all assets   
+@app.get("/assets")
+def list_all_assets():
+    try:
+        assets = []
+        # Get all files from GridFS
+        for grid_file in fs.find():
+            assets.append({
+                "file_id": str(grid_file._id),
+                "filename": grid_file.filename,
+                "uploaded_at": grid_file.upload_date.isoformat() if grid_file.upload_date else datetime.now().isoformat(),
+                "content_type": grid_file.content_type if hasattr(grid_file, 'content_type') else 'image/png',
+                # Determine type based on filename
+                "type": "enhanced" if "enhanced" in grid_file.filename.lower() 
+                       else "cropped" if "cropped" in grid_file.filename.lower() 
+                       else "image"
+            })
+        
+        # Sort by upload date (newest first)
+        assets.sort(key=lambda x: x["uploaded_at"], reverse=True)
+        
+        return {
+            "status": "success",
+            "count": len(assets),
+            "assets": assets
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Failed to list assets: {str(e)}")
+    
 #  DRAG-AND-DROP EDITOR 
 def snapshot_project(project_id):
     project = db.editor_projects.find_one({"_id": ObjectId(project_id)})
