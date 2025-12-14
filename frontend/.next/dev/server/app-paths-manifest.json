@@ -1,6 +1,6 @@
 {
   "/(dashboard)/assets/page": "app/(dashboard)/assets/page.js",
   "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
-  "/(dashboard)/settings/page": "app/(dashboard)/settings/page.js",
+  "/(dashboard)/templates/page": "app/(dashboard)/templates/page.js",
   "/page": "app/page.js"
 }

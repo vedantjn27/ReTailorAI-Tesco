@@ -1,164 +1,25 @@
-[00:00:00.870] Server  LOG      ✓ Ready in 569ms
-[00:00:06.220] Server  LOG      ○ Compiling / ...
-[00:00:08.726] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:00:08.880] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:00:08.880] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
-[00:00:08.880] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765715214728}
-[00:00:12.322] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765715218142}
-[00:00:12.619] Browser LOG     [Dashboard] Backend connected - disabling demo mode
-[00:00:12.620] Browser LOG     [Dashboard] Backend connected - disabling demo mode
-[00:00:16.043] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/assets color: rgb(120, 120, 120) color: inherit {"dp":"/assets","o":"http://localhost:3000/assets","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765715221881}
-[00:00:16.437] Browser LOG     [Assets] Demo mode initialized: false
-[00:00:16.437] Browser LOG     [Assets] Demo mode initialized: false
-[00:00:16.437] Browser LOG     [Assets] Assets loaded: {"assets":[{"content_type":"image/png","file_id":"693eaa1fc179a599d5ba517a","filename":"Screenshot 2025-11-23 195051.png","type":"image","uploaded_at":"2025-12-14T12:14:23.837000"}],"count":1,"status":"success"}
-[00:00:16.437] Browser LOG     [Assets] Transformed assets: [{"fileId":"693eaa1fc179a599d5ba517a","filename":"Screenshot 2025-11-23 195051.png","thumbnail":"http://localhost:8000/asset/693eaa1fc179a599d5ba517a","type":"image","uploadedAt":"2025-12-14T06:44:23.837Z"}]
-[00:00:16.437] Browser LOG     [Assets] Assets loaded: {"assets":[{"content_type":"image/png","file_id":"693eaa1fc179a599d5ba517a","filename":"Screenshot 2025-11-23 195051.png","type":"image","uploaded_at":"2025-12-14T12:14:23.837000"}],"count":1,"status":"success"}
-[00:00:16.437] Browser LOG     [Assets] Transformed assets: [{"fileId":"693eaa1fc179a599d5ba517a","filename":"Screenshot 2025-11-23 195051.png","thumbnail":"http://localhost:8000/asset/693eaa1fc179a599d5ba517a","type":"image","uploadedAt":"2025-12-14T06:44:23.837Z"}]
-[00:00:18.978] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765715224807}
-[00:00:21.412] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/settings color: rgb(120, 120, 120) color: inherit {"dp":"/settings","o":"http://localhost:3000/settings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765715227231}
-[00:00:21.412] Browser LOG     [Settings] Backend connected successfully
-[00:00:21.412] Browser LOG     [Settings] Backend connected successfully
-[00:00:34.649] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765715240476}
-[00:00:36.950] Browser LOG     [Dashboard] Backend error - enabling demo mode
-[00:00:37.234] Browser LOG     [Dashboard] Backend error - enabling demo mode
-[00:00:38.944] Browser LOG     [Assets] Demo mode initialized: true
-[00:00:38.945] Browser LOG     [Assets] Demo mode initialized: true
-[00:00:38.945] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/assets color: rgb(120, 120, 120) color: inherit {"dp":"/assets","o":"http://localhost:3000/assets","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765715244786}
-[00:00:39.459] Browser LOG     [Assets] Demo assets loaded: [{"fileId":"demo_asset_1","filename":"Product Photo 1.jpg","thumbnail":"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop","type":"image","uploadedAt":"2025-12-12T12:27:25.296Z"},{"fileId":"demo_asset_2","filename":"Enhanced Product.jpg","thumbnail":"https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop","type":"enhanced","uploadedAt":"2025-12-13T12:27:25.296Z"},{"fileId":"demo_asset_3","filename":"Cropped Square.jpg","thumbnail":"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop","type":"cropped","uploadedAt":"2025-12-14T11:27:25.296Z"},{"fileId":"demo_asset_4","filename":"Watch Collection.jpg","thumbnail":"https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=400&fit=crop","type":"image","uploadedAt":"2025-12-14T10:27:25.296Z"},{"fileId":"demo_asset_5","filename":"Headphones Pro.jpg","thumbnail":"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop","type":"image","uploadedAt":"2025-12-14T09:27:25.296Z"}]
-[00:00:39.459] Browser LOG     [Assets] Demo assets loaded: [{"fileId":"demo_asset_1","filename":"Product Photo 1.jpg","thumbnail":"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop","type":"image","uploadedAt":"2025-12-12T12:27:25.297Z"},{"fileId":"demo_asset_2","filename":"Enhanced Product.jpg","thumbnail":"https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop","type":"enhanced","uploadedAt":"2025-12-13T12:27:25.297Z"},{"fileId":"demo_asset_3","filename":"Cropped Square.jpg","thumbnail":"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop","type":"cropped","uploadedAt":"2025-12-14T11:27:25.297Z"},{"fileId":"demo_asset_4","filename":"Watch Collection.jpg","thumbnail":"https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=400&fit=crop","type":"image","uploadedAt":"2025-12-14T10:27:25.297Z"},{"fileId":"demo_asset_5","filename":"Headphones Pro.jpg","thumbnail":"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop","type":"image","uploadedAt":"2025-12-14T09:27:25.297Z"}]
-[00:00:41.473] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/settings color: rgb(120, 120, 120) color: inherit {"dp":"/settings","o":"http://localhost:3000/settings","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765715247310}
-[00:00:43.813] Browser LOG     [Settings] Backend not connected - error: {}
-[00:00:44.074] Browser LOG     [Settings] Backend not connected - error: {}
-[00:00:45.157] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765715250982}
-[00:01:00.692] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
-[00:01:00.907] Browser ERROR   A tree hydrated but some attributes of the server rendered HTML didn't match the client properties. This won't be patched up. This can happen if a SSR-ed Client Component used:
-
-- A server/client branch `if (typeof window !== 'undefined')`.
-- Variable input such as `Date.now()` or `Math.random()` which changes each time it's called.
-- Date formatting in a user's locale which doesn't match the server.
-- External changing data without sending a snapshot of it along with the HTML.
-- Invalid HTML tag nesting.
-
-It can also happen if the client has a browser extension installed which messes with the HTML before React loaded.
-
-%s%s https://react.dev/link/hydration-mismatch 
-
-  ...
-    <ClientPageRoot Component={function DashboardPage} serverProvidedParams={{...}}>
-      <DashboardPage params={Promise} searchParams={Promise}>
-        <div className="flex h-ful...">
-          <div>
-          <div className="flex-1 ove...">
-            <div className="mx-auto ma...">
-              <div>
-              <Card>
-              <div>
-              <Tabs defaultValue="recent" className="w-full">
-                <Tabs data-slot="tabs" className="flex flex-..." defaultValue="recent">
-                  <TabsProvider scope={undefined} baseId="radix-_R_1..." value="recent" ...>
-                    <Primitive.div dir="ltr" data-orientation="horizontal" data-slot="tabs" className="flex flex-..." ...>
-                      <div dir="ltr" data-orientation="horizontal" data-slot="tabs" className="flex flex-..." ref={null}>
-                        ...
-                          <div role="tablist" aria-orientation="horizontal" data-slot="tabs-list" ...>
-                            ...
-                              <Slot tabIndex={-1} data-orientation="horizontal" onMouseDown={function handleEvent} ...>
-                                <SlotClone tabIndex={-1} data-orientation="horizontal" onMouseDown={function handleEvent} ...>
-                                  <Primitive.button type="button" role="tab" aria-selected={true} ...>
-                                    <button
-                                      type="button"
-                                      role="tab"
-                                      aria-selected={true}
-+                                     aria-controls="radix-_R_155esnekndlb_-content-recent"
--                                     aria-controls="radix-_R_4klritqkndlb_-content-recent"
-                                      data-state="active"
-                                      data-disabled={undefined}
-                                      disabled={false}
-+                                     id="radix-_R_155esnekndlb_-trigger-recent"
--                                     id="radix-_R_4klritqkndlb_-trigger-recent"
-                                      data-slot="tabs-trigger"
-                                      className={"data-[state=active]:bg-background dark:data-[state=active]:text-for..."}
-                                      onMouseDown={function}
-                                      onKeyDown={function}
-                                      onFocus={function}
-                                      tabIndex={-1}
-                                      data-orientation="horizontal"
-                                      data-radix-collection-item=""
-                                      ref={function}
-                                    >
-+                                     Recent Projects
-                            ...
-                              <Slot tabIndex={-1} data-orientation="horizontal" onMouseDown={function handleEvent} ...>
-                                <SlotClone tabIndex={-1} data-orientation="horizontal" onMouseDown={function handleEvent} ...>
-                                  <Primitive.button type="button" role="tab" aria-selected={false} ...>
-                                    <button
-                                      type="button"
-                                      role="tab"
-                                      aria-selected={false}
-+                                     aria-controls="radix-_R_155esnekndlb_-content-campaigns"
--                                     aria-controls="radix-_R_4klritqkndlb_-content-campaigns"
-                                      data-state="inactive"
-                                      data-disabled={undefined}
-                                      disabled={false}
-+                                     id="radix-_R_155esnekndlb_-trigger-campaigns"
--                                     id="radix-_R_4klritqkndlb_-trigger-campaigns"
-                                      data-slot="tabs-trigger"
-                                      className={"data-[state=active]:bg-background dark:data-[state=active]:text-for..."}
-                                      onMouseDown={function}
-                                      onKeyDown={function}
-                                      onFocus={function}
-                                      tabIndex={-1}
-                                      data-orientation="horizontal"
-                                      data-radix-collection-item=""
-                                      ref={function}
-                                    >
-+                                     Campaigns
-                        <TabsContent value="recent" className="mt-4 sm:mt-6">
-                          <TabsContent data-slot="tabs-content" className="flex-1 out..." value="recent">
-                            <Presence present={true}>
-                              <Primitive.div data-state="active" data-orientation="horizontal" role="tabpanel" ...>
-                                <div
-                                  data-state="active"
-                                  data-orientation="horizontal"
-                                  role="tabpanel"
-+                                 aria-labelledby="radix-_R_155esnekndlb_-trigger-recent"
--                                 aria-labelledby="radix-_R_4klritqkndlb_-trigger-recent"
-                                  hidden={false}
-+                                 id="radix-_R_155esnekndlb_-content-recent"
--                                 id="radix-_R_4klritqkndlb_-content-recent"
-                                  tabIndex={0}
-                                  data-slot="tabs-content"
-                                  className="flex-1 outline-none mt-4 sm:mt-6"
-                                  style={{animationDuration:"0s"}}
-                                  ref={function}
-                                >
-                        <TabsContent value="campaigns" className="mt-6">
-                          <TabsContent data-slot="tabs-content" className="flex-1 out..." value="campaigns">
-                            <Presence present={false}>
-                              <Primitive.div data-state="inactive" data-orientation="horizontal" role="tabpanel" ...>
-                                <div
-                                  data-state="inactive"
-                                  data-orientation="horizontal"
-                                  role="tabpanel"
-+                                 aria-labelledby="radix-_R_155esnekndlb_-trigger-campaigns"
--                                 aria-labelledby="radix-_R_4klritqkndlb_-trigger-campaigns"
-                                  hidden={true}
-+                                 id="radix-_R_155esnekndlb_-content-campaigns"
--                                 id="radix-_R_4klritqkndlb_-content-campaigns"
-                                  tabIndex={0}
-                                  data-slot="tabs-content"
-                                  className="flex-1 outline-none mt-6"
-                                  style={{animationDuration:undefined}}
-                                  ref={function}
-                                >
-
-[00:01:00.907] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
-[00:01:00.908] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/dashboard","route":"/dashboard"}
-[00:01:00.908] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3000/dashboard","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765715266747}
-[00:01:01.183] Browser LOG     [Dashboard] Backend connected - disabling demo mode
-[00:01:03.891] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/assets color: rgb(120, 120, 120) color: inherit {"dp":"/assets","o":"http://localhost:3000/assets","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765715269727}
-[00:01:04.282] Browser LOG     [Assets] Demo mode initialized: false
-[00:01:04.282] Browser LOG     [Assets] Demo mode initialized: false
-[00:01:04.282] Browser LOG     [Assets] Assets loaded: {"assets":[{"content_type":"image/png","file_id":"693eaa1fc179a599d5ba517a","filename":"Screenshot 2025-11-23 195051.png","type":"image","uploaded_at":"2025-12-14T12:14:23.837000"}],"count":1,"status":"success"}
-[00:01:04.282] Browser LOG     [Assets] Transformed assets: [{"fileId":"693eaa1fc179a599d5ba517a","filename":"Screenshot 2025-11-23 195051.png","thumbnail":"http://localhost:8000/asset/693eaa1fc179a599d5ba517a","type":"image","uploadedAt":"2025-12-14T06:44:23.837Z"}]
-[00:01:04.282] Browser LOG     [Assets] Assets loaded: {"assets":[{"content_type":"image/png","file_id":"693eaa1fc179a599d5ba517a","filename":"Screenshot 2025-11-23 195051.png","type":"image","uploaded_at":"2025-12-14T12:14:23.837000"}],"count":1,"status":"success"}
-[00:01:04.282] Browser LOG     [Assets] Transformed assets: [{"fileId":"693eaa1fc179a599d5ba517a","filename":"Screenshot 2025-11-23 195051.png","thumbnail":"http://localhost:8000/asset/693eaa1fc179a599d5ba517a","type":"image","uploadedAt":"2025-12-14T06:44:23.837Z"}]
+[00:00:00.878] Server  LOG      ✓ Ready in 565ms
+[00:00:05.932] Server  LOG      ○ Compiling / ...
+[00:00:08.754] Browser INFO    %cDownload the React DevTools for a better development experience: https://react.dev/link/react-devtools font-weight:bold
+[00:00:08.911] Browser LOG     %c[Vercel Web Analytics]%c Debug mode is enabled by default in development. No requests will be sent to the server. color: rgb(120, 120, 120) color: inherit
+[00:00:08.911] Browser LOG     %c[Vercel Web Analytics]%c Running queued event color: rgb(120, 120, 120) color: inherit pageview {"path":"/","route":"/"}
+[00:00:08.911] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/ color: rgb(120, 120, 120) color: inherit {"dp":"/","o":"http://localhost:3000/","r":"","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765718017206}
+[00:00:12.178] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765718020448}
+[00:00:15.779] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/templates color: rgb(120, 120, 120) color: inherit {"dp":"/templates","o":"http://localhost:3000/templates","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765718024068}
+[00:00:18.158] Browser ERROR   Error loading templates, switching to demo mode: {}
+[00:00:18.405] Browser ERROR   Error loading templates, switching to demo mode: {}
+[00:03:28.591] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765718216871}
+[00:03:31.768] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/assets color: rgb(120, 120, 120) color: inherit {"dp":"/assets","o":"http://localhost:3000/assets","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765718220064}
+[00:03:32.067] Browser LOG     [Assets] Demo mode initialized: true
+[00:03:32.067] Browser LOG     [Assets] Demo mode initialized: true
+[00:03:32.568] Browser LOG     [Assets] Demo assets loaded: [{"fileId":"demo_asset_1","filename":"Product Photo 1.jpg","thumbnail":"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop","type":"image","uploadedAt":"2025-12-12T13:17:00.865Z"},{"fileId":"demo_asset_2","filename":"Enhanced Product.jpg","thumbnail":"https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop","type":"enhanced","uploadedAt":"2025-12-13T13:17:00.865Z"},{"fileId":"demo_asset_3","filename":"Cropped Square.jpg","thumbnail":"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop","type":"cropped","uploadedAt":"2025-12-14T12:17:00.865Z"},{"fileId":"demo_asset_4","filename":"Watch Collection.jpg","thumbnail":"https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=400&fit=crop","type":"image","uploadedAt":"2025-12-14T11:17:00.865Z"},{"fileId":"demo_asset_5","filename":"Headphones Pro.jpg","thumbnail":"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop","type":"image","uploadedAt":"2025-12-14T10:17:00.865Z"}]
+[00:03:32.568] Browser LOG     [Assets] Demo assets loaded: [{"fileId":"demo_asset_1","filename":"Product Photo 1.jpg","thumbnail":"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop","type":"image","uploadedAt":"2025-12-12T13:17:00.865Z"},{"fileId":"demo_asset_2","filename":"Enhanced Product.jpg","thumbnail":"https://images.unsplash.com/photo-1572635196237-14b3f281503f?w=400&h=400&fit=crop","type":"enhanced","uploadedAt":"2025-12-13T13:17:00.865Z"},{"fileId":"demo_asset_3","filename":"Cropped Square.jpg","thumbnail":"https://images.unsplash.com/photo-1523275335684-37898b6baf30?w=400&h=400&fit=crop","type":"cropped","uploadedAt":"2025-12-14T12:17:00.865Z"},{"fileId":"demo_asset_4","filename":"Watch Collection.jpg","thumbnail":"https://images.unsplash.com/photo-1524592094714-0f0654e20314?w=400&h=400&fit=crop","type":"image","uploadedAt":"2025-12-14T11:17:00.865Z"},{"fileId":"demo_asset_5","filename":"Headphones Pro.jpg","thumbnail":"https://images.unsplash.com/photo-1505740420928-5e560c06d30e?w=400&h=400&fit=crop","type":"image","uploadedAt":"2025-12-14T10:17:00.865Z"}]
+[00:03:33.230] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/templates color: rgb(120, 120, 120) color: inherit {"dp":"/templates","o":"http://localhost:3000/templates","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765718221518}
+[00:03:35.563] Browser ERROR   Error loading templates, switching to demo mode: {}
+[00:03:35.832] Browser ERROR   Error loading templates, switching to demo mode: {}
+[00:04:10.459] Server  LOG      ✓ Compiled in 76ms
+[00:04:14.203] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/dashboard color: rgb(120, 120, 120) color: inherit {"dp":"/dashboard","o":"http://localhost:3000/dashboard","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765718262482}
+[00:04:15.714] Browser LOG     %c[Vercel Web Analytics]%c [pageview] http://localhost:3000/templates color: rgb(120, 120, 120) color: inherit {"dp":"/templates","o":"http://localhost:3000/templates","sdkn":"@vercel/analytics/next","sdkv":"1.3.1","sv":"0.1.3","ts":1765718264003}
+[00:04:16.800] Browser ERROR   Error loading templates, switching to demo mode: {}
+[00:04:18.079] Browser ERROR   Error loading templates, switching to demo mode: {}
+[00:18:10.618] Server  LOG      ✓ Compiled in 73ms

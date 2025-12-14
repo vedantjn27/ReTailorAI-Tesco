@@ -1266,6 +1266,353 @@ var __TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$scroll$2
 ;
 ;
 ;
+// Demo templates data
+const DEMO_TEMPLATES = [
+    {
+        template_id: "demo_1",
+        template_name: "Product Banner",
+        width: 1200,
+        height: 628,
+        layers_count: 3
+    },
+    {
+        template_id: "demo_2",
+        template_name: "Social Media Post",
+        width: 1080,
+        height: 1080,
+        layers_count: 4
+    },
+    {
+        template_id: "demo_3",
+        template_name: "Email Header",
+        width: 600,
+        height: 400,
+        layers_count: 2
+    },
+    {
+        template_id: "demo_4",
+        template_name: "Display Ad",
+        width: 728,
+        height: 90,
+        layers_count: 3
+    },
+    {
+        template_id: "demo_5",
+        template_name: "Story Template",
+        width: 1080,
+        height: 1920,
+        layers_count: 5
+    },
+    {
+        template_id: "demo_6",
+        template_name: "Product Card",
+        width: 800,
+        height: 1000,
+        layers_count: 4
+    }
+];
+const DEMO_TEMPLATE_DETAILS = {
+    demo_1: {
+        template_id: "demo_1",
+        template_name: "Product Banner",
+        width: 1200,
+        height: 628,
+        layers: [
+            {
+                layer_id: "layer_1",
+                layer_name: "Background",
+                type: "rectangle",
+                content: "",
+                x: 0,
+                y: 0,
+                width: 1200,
+                height: 628,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_2",
+                layer_name: "Product Image",
+                type: "image",
+                content: "",
+                x: 100,
+                y: 114,
+                width: 400,
+                height: 400,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_3",
+                layer_name: "Title Text",
+                type: "text",
+                content: "Product Title",
+                x: 550,
+                y: 264,
+                width: 500,
+                height: 100,
+                visible: true,
+                locked: false
+            }
+        ]
+    },
+    demo_2: {
+        template_id: "demo_2",
+        template_name: "Social Media Post",
+        width: 1080,
+        height: 1080,
+        layers: [
+            {
+                layer_id: "layer_1",
+                layer_name: "Background",
+                type: "rectangle",
+                content: "",
+                x: 0,
+                y: 0,
+                width: 1080,
+                height: 1080,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_2",
+                layer_name: "Main Image",
+                type: "image",
+                content: "",
+                x: 90,
+                y: 90,
+                width: 900,
+                height: 600,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_3",
+                layer_name: "Header",
+                type: "text",
+                content: "Header",
+                x: 90,
+                y: 740,
+                width: 900,
+                height: 120,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_4",
+                layer_name: "Logo",
+                type: "image",
+                content: "",
+                x: 90,
+                y: 900,
+                width: 150,
+                height: 150,
+                visible: true,
+                locked: false
+            }
+        ]
+    },
+    demo_3: {
+        template_id: "demo_3",
+        template_name: "Email Header",
+        width: 600,
+        height: 400,
+        layers: [
+            {
+                layer_id: "layer_1",
+                layer_name: "Background",
+                type: "rectangle",
+                content: "",
+                x: 0,
+                y: 0,
+                width: 600,
+                height: 400,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_2",
+                layer_name: "Title",
+                type: "text",
+                content: "Email Header",
+                x: 50,
+                y: 150,
+                width: 500,
+                height: 100,
+                visible: true,
+                locked: false
+            }
+        ]
+    },
+    demo_4: {
+        template_id: "demo_4",
+        template_name: "Display Ad",
+        width: 728,
+        height: 90,
+        layers: [
+            {
+                layer_id: "layer_1",
+                layer_name: "Background",
+                type: "rectangle",
+                content: "",
+                x: 0,
+                y: 0,
+                width: 728,
+                height: 90,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_2",
+                layer_name: "Logo",
+                type: "image",
+                content: "",
+                x: 10,
+                y: 10,
+                width: 70,
+                height: 70,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_3",
+                layer_name: "Ad Text",
+                type: "text",
+                content: "Ad Message",
+                x: 100,
+                y: 20,
+                width: 600,
+                height: 50,
+                visible: true,
+                locked: false
+            }
+        ]
+    },
+    demo_5: {
+        template_id: "demo_5",
+        template_name: "Story Template",
+        width: 1080,
+        height: 1920,
+        layers: [
+            {
+                layer_id: "layer_1",
+                layer_name: "Background",
+                type: "rectangle",
+                content: "",
+                x: 0,
+                y: 0,
+                width: 1080,
+                height: 1920,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_2",
+                layer_name: "Hero Image",
+                type: "image",
+                content: "",
+                x: 90,
+                y: 200,
+                width: 900,
+                height: 900,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_3",
+                layer_name: "Title",
+                type: "text",
+                content: "Story Title",
+                x: 90,
+                y: 1150,
+                width: 900,
+                height: 150,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_4",
+                layer_name: "Description",
+                type: "text",
+                content: "Description text",
+                x: 90,
+                y: 1350,
+                width: 900,
+                height: 200,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_5",
+                layer_name: "CTA Button",
+                type: "button",
+                content: "Shop Now",
+                x: 340,
+                y: 1650,
+                width: 400,
+                height: 100,
+                visible: true,
+                locked: false
+            }
+        ]
+    },
+    demo_6: {
+        template_id: "demo_6",
+        template_name: "Product Card",
+        width: 800,
+        height: 1000,
+        layers: [
+            {
+                layer_id: "layer_1",
+                layer_name: "Background",
+                type: "rectangle",
+                content: "",
+                x: 0,
+                y: 0,
+                width: 800,
+                height: 1000,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_2",
+                layer_name: "Product Image",
+                type: "image",
+                content: "",
+                x: 100,
+                y: 100,
+                width: 600,
+                height: 500,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_3",
+                layer_name: "Product Name",
+                type: "text",
+                content: "Product Name",
+                x: 100,
+                y: 650,
+                width: 600,
+                height: 100,
+                visible: true,
+                locked: false
+            },
+            {
+                layer_id: "layer_4",
+                layer_name: "Price",
+                type: "text",
+                content: "$99.99",
+                x: 100,
+                y: 800,
+                width: 600,
+                height: 80,
+                visible: true,
+                locked: false
+            }
+        ]
+    }
+};
 function TemplatesPage() {
     const [templates, setTemplates] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])([]);
     const [loading, setLoading] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(true);
@@ -1276,6 +1623,7 @@ function TemplatesPage() {
     const [isSubmitting, setIsSubmitting] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const [selectedTemplate, setSelectedTemplate] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(null);
     const [loadingDetails, setLoadingDetails] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
+    const [isDemoMode, setIsDemoMode] = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useState"])(false);
     const router = (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$navigation$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useRouter"])();
     const { toast } = (0, __TURBOPACK__imported__module__$5b$project$5d2f$hooks$2f$use$2d$toast$2e$ts__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["useToast"])();
     // Form state
@@ -1298,13 +1646,12 @@ function TemplatesPage() {
             const result = await response.json();
             console.log("Loaded templates:", result.templates);
             setTemplates(result.templates || []);
+            setIsDemoMode(false);
         } catch (error) {
-            console.error("Error loading templates:", error);
-            toast({
-                title: "Error",
-                description: "Failed to load templates",
-                variant: "destructive"
-            });
+            console.error("Error loading templates, switching to demo mode:", error);
+            // Switch to demo mode
+            setTemplates(DEMO_TEMPLATES);
+            setIsDemoMode(true);
         } finally{
             setLoading(false);
         }
@@ -1313,6 +1660,17 @@ function TemplatesPage() {
         setLoadingDetails(true);
         setIsDetailsDialogOpen(true);
         try {
+            if (isDemoMode) {
+                // Use demo data
+                setTimeout(()=>{
+                    const demoTemplate = DEMO_TEMPLATE_DETAILS[templateId];
+                    if (demoTemplate) {
+                        setSelectedTemplate(demoTemplate);
+                    }
+                    setLoadingDetails(false);
+                }, 500); // Simulate network delay
+                return;
+            }
             const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
             const response = await fetch(`${baseURL}/templates/${templateId}`);
             if (!response.ok) {
@@ -1320,6 +1678,7 @@ function TemplatesPage() {
             }
             const data = await response.json();
             setSelectedTemplate(data.template);
+            setLoadingDetails(false);
         } catch (error) {
             toast({
                 title: "Error",
@@ -1327,11 +1686,18 @@ function TemplatesPage() {
                 variant: "destructive"
             });
             setIsDetailsDialogOpen(false);
-        } finally{
             setLoadingDetails(false);
         }
     };
     const handleUseTemplate = async (templateId)=>{
+        if (isDemoMode) {
+            toast({
+                title: "Demo Mode",
+                description: "Template application is not available in demo mode",
+                variant: "destructive"
+            });
+            return;
+        }
         setLoading(true);
         try {
             // Create new project
@@ -1354,11 +1720,17 @@ function TemplatesPage() {
         }
     };
     const handleAddTemplate = async ()=>{
+        if (isDemoMode) {
+            toast({
+                title: "Demo Mode",
+                description: "Adding templates is not available in demo mode",
+                variant: "destructive"
+            });
+            return;
+        }
         setIsSubmitting(true);
         try {
-            // Use the same base URL pattern as your apiClient
             const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000";
-            // Create empty layers array based on layers_count
             const layersCount = parseInt(formData.layers_count);
             const layers = Array.from({
                 length: layersCount
@@ -1393,7 +1765,6 @@ function TemplatesPage() {
                 title: "Success",
                 description: "Template added successfully"
             });
-            // Reset form
             setFormData({
                 template_name: "",
                 width: "",
@@ -1401,7 +1772,6 @@ function TemplatesPage() {
                 layers_count: ""
             });
             setIsAddDialogOpen(false);
-            // Reload templates
             loadTemplates();
         } catch (error) {
             toast({
@@ -1424,12 +1794,30 @@ function TemplatesPage() {
                     children: [
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                             children: [
-                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
-                                    className: "text-3xl font-bold tracking-tight",
-                                    children: "Template Library"
-                                }, void 0, false, {
+                                /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
+                                    className: "flex items-center gap-3",
+                                    children: [
+                                        /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("h1", {
+                                            className: "text-3xl font-bold tracking-tight",
+                                            children: "Template Library"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/(dashboard)/templates/page.tsx",
+                                            lineNumber: 596,
+                                            columnNumber: 15
+                                        }, this),
+                                        isDemoMode && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
+                                            variant: "secondary",
+                                            className: "text-xs",
+                                            children: "Demo Mode"
+                                        }, void 0, false, {
+                                            fileName: "[project]/app/(dashboard)/templates/page.tsx",
+                                            lineNumber: 598,
+                                            columnNumber: 17
+                                        }, this)
+                                    ]
+                                }, void 0, true, {
                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                    lineNumber: 218,
+                                    lineNumber: 595,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1437,13 +1825,13 @@ function TemplatesPage() {
                                     children: "Pre-designed layouts optimized for retail media"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                    lineNumber: 219,
+                                    lineNumber: 603,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                            lineNumber: 217,
+                            lineNumber: 594,
                             columnNumber: 11
                         }, this),
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1462,19 +1850,19 @@ function TemplatesPage() {
                                                         className: "mr-2 h-4 w-4"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                        lineNumber: 225,
+                                                        lineNumber: 609,
                                                         columnNumber: 19
                                                     }, this),
                                                     "View All Templates"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                lineNumber: 224,
+                                                lineNumber: 608,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                            lineNumber: 223,
+                                            lineNumber: 607,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogContent"], {
@@ -1486,7 +1874,7 @@ function TemplatesPage() {
                                                             children: "All Available Templates"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                            lineNumber: 231,
+                                                            lineNumber: 615,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogDescription"], {
@@ -1497,13 +1885,13 @@ function TemplatesPage() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                            lineNumber: 232,
+                                                            lineNumber: 616,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                    lineNumber: 230,
+                                                    lineNumber: 614,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$scroll$2d$area$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ScrollArea"], {
@@ -1523,7 +1911,7 @@ function TemplatesPage() {
                                                                                         children: template.template_name
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                                        lineNumber: 243,
+                                                                                        lineNumber: 627,
                                                                                         columnNumber: 31
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -1539,13 +1927,13 @@ function TemplatesPage() {
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                                        lineNumber: 244,
+                                                                                        lineNumber: 628,
                                                                                         columnNumber: 31
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                                lineNumber: 242,
+                                                                                lineNumber: 626,
                                                                                 columnNumber: 29
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1563,14 +1951,14 @@ function TemplatesPage() {
                                                                                                 className: "mr-1 h-3 w-3"
                                                                                             }, void 0, false, {
                                                                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                                                lineNumber: 257,
+                                                                                                lineNumber: 641,
                                                                                                 columnNumber: 33
                                                                                             }, this),
                                                                                             "Details"
                                                                                         ]
                                                                                     }, void 0, true, {
                                                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                                        lineNumber: 249,
+                                                                                        lineNumber: 633,
                                                                                         columnNumber: 31
                                                                                     }, this),
                                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1579,54 +1967,55 @@ function TemplatesPage() {
                                                                                             setIsListDialogOpen(false);
                                                                                             handleUseTemplate(template.template_id);
                                                                                         },
+                                                                                        disabled: isDemoMode,
                                                                                         children: "Use"
                                                                                     }, void 0, false, {
                                                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                                        lineNumber: 260,
+                                                                                        lineNumber: 644,
                                                                                         columnNumber: 31
                                                                                     }, this)
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                                lineNumber: 248,
+                                                                                lineNumber: 632,
                                                                                 columnNumber: 29
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                        lineNumber: 241,
+                                                                        lineNumber: 625,
                                                                         columnNumber: 27
                                                                     }, this)
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                    lineNumber: 240,
+                                                                    lineNumber: 624,
                                                                     columnNumber: 25
                                                                 }, this)
                                                             }, template.template_id, false, {
                                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                lineNumber: 239,
+                                                                lineNumber: 623,
                                                                 columnNumber: 23
                                                             }, this))
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                        lineNumber: 237,
+                                                        lineNumber: 621,
                                                         columnNumber: 19
                                                     }, this)
                                                 }, void 0, false, {
                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                    lineNumber: 236,
+                                                    lineNumber: 620,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                            lineNumber: 229,
+                                            lineNumber: 613,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                    lineNumber: 222,
+                                    lineNumber: 606,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -1636,24 +2025,25 @@ function TemplatesPage() {
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogTrigger"], {
                                             asChild: true,
                                             children: /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
+                                                disabled: isDemoMode,
                                                 children: [
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$lucide$2d$react$2f$dist$2f$esm$2f$icons$2f$plus$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__$3c$export__default__as__Plus$3e$__["Plus"], {
                                                         className: "mr-2 h-4 w-4"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                        lineNumber: 282,
+                                                        lineNumber: 667,
                                                         columnNumber: 19
                                                     }, this),
                                                     "Add Template"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                lineNumber: 281,
+                                                lineNumber: 666,
                                                 columnNumber: 17
                                             }, this)
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                            lineNumber: 280,
+                                            lineNumber: 665,
                                             columnNumber: 15
                                         }, this),
                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogContent"], {
@@ -1664,20 +2054,20 @@ function TemplatesPage() {
                                                             children: "Add New Template"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                            lineNumber: 288,
+                                                            lineNumber: 673,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogDescription"], {
                                                             children: "Create a new template for your retail media designs"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                            lineNumber: 289,
+                                                            lineNumber: 674,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                    lineNumber: 287,
+                                                    lineNumber: 672,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1691,7 +2081,7 @@ function TemplatesPage() {
                                                                     children: "Template Name"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                    lineNumber: 295,
+                                                                    lineNumber: 680,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1704,13 +2094,13 @@ function TemplatesPage() {
                                                                         })
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                    lineNumber: 296,
+                                                                    lineNumber: 681,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                            lineNumber: 294,
+                                                            lineNumber: 679,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1724,7 +2114,7 @@ function TemplatesPage() {
                                                                             children: "Width (px)"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                            lineNumber: 305,
+                                                                            lineNumber: 690,
                                                                             columnNumber: 23
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1738,13 +2128,13 @@ function TemplatesPage() {
                                                                                 })
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                            lineNumber: 306,
+                                                                            lineNumber: 691,
                                                                             columnNumber: 23
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                    lineNumber: 304,
+                                                                    lineNumber: 689,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1755,7 +2145,7 @@ function TemplatesPage() {
                                                                             children: "Height (px)"
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                            lineNumber: 315,
+                                                                            lineNumber: 700,
                                                                             columnNumber: 23
                                                                         }, this),
                                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1769,19 +2159,19 @@ function TemplatesPage() {
                                                                                 })
                                                                         }, void 0, false, {
                                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                            lineNumber: 316,
+                                                                            lineNumber: 701,
                                                                             columnNumber: 23
                                                                         }, this)
                                                                     ]
                                                                 }, void 0, true, {
                                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                    lineNumber: 314,
+                                                                    lineNumber: 699,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                            lineNumber: 303,
+                                                            lineNumber: 688,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1792,7 +2182,7 @@ function TemplatesPage() {
                                                                     children: "Number of Layers"
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                    lineNumber: 326,
+                                                                    lineNumber: 711,
                                                                     columnNumber: 21
                                                                 }, this),
                                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -1806,19 +2196,19 @@ function TemplatesPage() {
                                                                         })
                                                                 }, void 0, false, {
                                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                    lineNumber: 327,
+                                                                    lineNumber: 712,
                                                                     columnNumber: 21
                                                                 }, this)
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                            lineNumber: 325,
+                                                            lineNumber: 710,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                    lineNumber: 293,
+                                                    lineNumber: 678,
                                                     columnNumber: 17
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogFooter"], {
@@ -1830,7 +2220,7 @@ function TemplatesPage() {
                                                             children: "Cancel"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                            lineNumber: 337,
+                                                            lineNumber: 722,
                                                             columnNumber: 19
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -1839,42 +2229,42 @@ function TemplatesPage() {
                                                             children: isSubmitting ? "Adding..." : "Add Template"
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                            lineNumber: 344,
+                                                            lineNumber: 729,
                                                             columnNumber: 19
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                    lineNumber: 336,
+                                                    lineNumber: 721,
                                                     columnNumber: 17
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                            lineNumber: 286,
+                                            lineNumber: 671,
                                             columnNumber: 15
                                         }, this)
                                     ]
                                 }, void 0, true, {
                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                    lineNumber: 279,
+                                    lineNumber: 664,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                            lineNumber: 221,
+                            lineNumber: 605,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                    lineNumber: 216,
+                    lineNumber: 593,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                lineNumber: 215,
+                lineNumber: 592,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Dialog"], {
@@ -1889,20 +2279,20 @@ function TemplatesPage() {
                                     children: "Template Details"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                    lineNumber: 367,
+                                    lineNumber: 752,
                                     columnNumber: 13
                                 }, this),
                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogDescription"], {
                                     children: "View detailed information about this template"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                    lineNumber: 368,
+                                    lineNumber: 753,
                                     columnNumber: 13
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                            lineNumber: 366,
+                            lineNumber: 751,
                             columnNumber: 11
                         }, this),
                         loadingDetails ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1914,7 +2304,7 @@ function TemplatesPage() {
                                         className: "mx-auto h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                        lineNumber: 375,
+                                        lineNumber: 760,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1922,18 +2312,18 @@ function TemplatesPage() {
                                         children: "Loading details..."
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                        lineNumber: 376,
+                                        lineNumber: 761,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                lineNumber: 374,
+                                lineNumber: 759,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                            lineNumber: 373,
+                            lineNumber: 758,
                             columnNumber: 13
                         }, this) : selectedTemplate ? /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$scroll$2d$area$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["ScrollArea"], {
                             className: "max-h-[60vh]",
@@ -1950,7 +2340,7 @@ function TemplatesPage() {
                                                         children: "Template Name"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                        lineNumber: 384,
+                                                        lineNumber: 769,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1958,13 +2348,13 @@ function TemplatesPage() {
                                                         children: selectedTemplate.template_name
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                        lineNumber: 385,
+                                                        lineNumber: 770,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                lineNumber: 383,
+                                                lineNumber: 768,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -1974,7 +2364,7 @@ function TemplatesPage() {
                                                         children: "Dimensions"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                        lineNumber: 388,
+                                                        lineNumber: 773,
                                                         columnNumber: 21
                                                     }, this),
                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -1987,19 +2377,19 @@ function TemplatesPage() {
                                                         ]
                                                     }, void 0, true, {
                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                        lineNumber: 389,
+                                                        lineNumber: 774,
                                                         columnNumber: 21
                                                     }, this)
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                lineNumber: 387,
+                                                lineNumber: 772,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                        lineNumber: 382,
+                                        lineNumber: 767,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2013,7 +2403,7 @@ function TemplatesPage() {
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                lineNumber: 396,
+                                                lineNumber: 781,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2032,7 +2422,7 @@ function TemplatesPage() {
                                                                                 children: layer.layer_name
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                                lineNumber: 405,
+                                                                                lineNumber: 790,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -2051,13 +2441,13 @@ function TemplatesPage() {
                                                                                 ]
                                                                             }, void 0, true, {
                                                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                                lineNumber: 408,
+                                                                                lineNumber: 793,
                                                                                 columnNumber: 31
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                        lineNumber: 404,
+                                                                        lineNumber: 789,
                                                                         columnNumber: 29
                                                                     }, this),
                                                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2069,7 +2459,7 @@ function TemplatesPage() {
                                                                                 children: layer.visible ? "Visible" : "Hidden"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                                lineNumber: 413,
+                                                                                lineNumber: 798,
                                                                                 columnNumber: 31
                                                                             }, this),
                                                                             layer.locked && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -2078,51 +2468,51 @@ function TemplatesPage() {
                                                                                 children: "Locked"
                                                                             }, void 0, false, {
                                                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                                lineNumber: 417,
+                                                                                lineNumber: 802,
                                                                                 columnNumber: 33
                                                                             }, this)
                                                                         ]
                                                                     }, void 0, true, {
                                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                        lineNumber: 412,
+                                                                        lineNumber: 797,
                                                                         columnNumber: 29
                                                                     }, this)
                                                                 ]
                                                             }, void 0, true, {
                                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                                lineNumber: 403,
+                                                                lineNumber: 788,
                                                                 columnNumber: 27
                                                             }, this)
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                            lineNumber: 402,
+                                                            lineNumber: 787,
                                                             columnNumber: 25
                                                         }, this)
                                                     }, layer.layer_id, false, {
                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                        lineNumber: 401,
+                                                        lineNumber: 786,
                                                         columnNumber: 23
                                                     }, this))
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                lineNumber: 399,
+                                                lineNumber: 784,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                        lineNumber: 395,
+                                        lineNumber: 780,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                lineNumber: 381,
+                                lineNumber: 766,
                                 columnNumber: 15
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                            lineNumber: 380,
+                            lineNumber: 765,
                             columnNumber: 13
                         }, this) : null,
                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$dialog$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["DialogFooter"], {
@@ -2133,7 +2523,7 @@ function TemplatesPage() {
                                     children: "Close"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                    lineNumber: 432,
+                                    lineNumber: 817,
                                     columnNumber: 13
                                 }, this),
                                 selectedTemplate && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -2141,27 +2531,28 @@ function TemplatesPage() {
                                         setIsDetailsDialogOpen(false);
                                         handleUseTemplate(selectedTemplate.template_id);
                                     },
+                                    disabled: isDemoMode,
                                     children: "Use This Template"
                                 }, void 0, false, {
                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                    lineNumber: 436,
+                                    lineNumber: 821,
                                     columnNumber: 15
                                 }, this)
                             ]
                         }, void 0, true, {
                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                            lineNumber: 431,
+                            lineNumber: 816,
                             columnNumber: 11
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                    lineNumber: 365,
+                    lineNumber: 750,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                lineNumber: 364,
+                lineNumber: 749,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2175,7 +2566,7 @@ function TemplatesPage() {
                                 className: "absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                lineNumber: 451,
+                                lineNumber: 839,
                                 columnNumber: 13
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$input$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Input"], {
@@ -2185,23 +2576,23 @@ function TemplatesPage() {
                                 onChange: (e)=>setSearchQuery(e.target.value)
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                lineNumber: 452,
+                                lineNumber: 840,
                                 columnNumber: 13
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                        lineNumber: 450,
+                        lineNumber: 838,
                         columnNumber: 11
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                    lineNumber: 449,
+                    lineNumber: 837,
                     columnNumber: 9
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                lineNumber: 448,
+                lineNumber: 836,
                 columnNumber: 7
             }, this),
             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2215,7 +2606,7 @@ function TemplatesPage() {
                                 className: "mx-auto h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                lineNumber: 467,
+                                lineNumber: 855,
                                 columnNumber: 15
                             }, this),
                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2223,18 +2614,18 @@ function TemplatesPage() {
                                 children: "Loading templates..."
                             }, void 0, false, {
                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                lineNumber: 468,
+                                lineNumber: 856,
                                 columnNumber: 15
                             }, this)
                         ]
                     }, void 0, true, {
                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                        lineNumber: 466,
+                        lineNumber: 854,
                         columnNumber: 13
                     }, this)
                 }, void 0, false, {
                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                    lineNumber: 465,
+                    lineNumber: 853,
                     columnNumber: 11
                 }, this) : /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
                     className: "grid gap-6 sm:grid-cols-2 lg:grid-cols-3",
@@ -2248,12 +2639,12 @@ function TemplatesPage() {
                                             className: "h-16 w-16 text-primary/50"
                                         }, void 0, false, {
                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                            lineNumber: 476,
+                                            lineNumber: 864,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                        lineNumber: 475,
+                                        lineNumber: 863,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardHeader"], {
@@ -2268,7 +2659,7 @@ function TemplatesPage() {
                                                             children: template.template_name
                                                         }, void 0, false, {
                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                            lineNumber: 481,
+                                                            lineNumber: 869,
                                                             columnNumber: 23
                                                         }, this),
                                                         /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardDescription"], {
@@ -2281,13 +2672,13 @@ function TemplatesPage() {
                                                             ]
                                                         }, void 0, true, {
                                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                            lineNumber: 482,
+                                                            lineNumber: 870,
                                                             columnNumber: 23
                                                         }, this)
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                    lineNumber: 480,
+                                                    lineNumber: 868,
                                                     columnNumber: 21
                                                 }, this),
                                                 /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$badge$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Badge"], {
@@ -2298,18 +2689,18 @@ function TemplatesPage() {
                                                     ]
                                                 }, void 0, true, {
                                                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                    lineNumber: 486,
+                                                    lineNumber: 874,
                                                     columnNumber: 21
                                                 }, this)
                                             ]
                                         }, void 0, true, {
                                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                            lineNumber: 479,
+                                            lineNumber: 867,
                                             columnNumber: 19
                                         }, this)
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                        lineNumber: 478,
+                                        lineNumber: 866,
                                         columnNumber: 17
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$card$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["CardContent"], {
@@ -2318,11 +2709,11 @@ function TemplatesPage() {
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
                                                 className: "w-full",
                                                 onClick: ()=>handleUseTemplate(template.template_id),
-                                                disabled: loading,
-                                                children: "Use Template"
+                                                disabled: loading || isDemoMode,
+                                                children: isDemoMode ? "Use Template" : "Use Template"
                                             }, void 0, false, {
                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                lineNumber: 490,
+                                                lineNumber: 878,
                                                 columnNumber: 19
                                             }, this),
                                             /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])(__TURBOPACK__imported__module__$5b$project$5d2f$components$2f$ui$2f$button$2e$tsx__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["Button"], {
@@ -2334,26 +2725,26 @@ function TemplatesPage() {
                                                         className: "mr-2 h-4 w-4"
                                                     }, void 0, false, {
                                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                        lineNumber: 502,
+                                                        lineNumber: 890,
                                                         columnNumber: 21
                                                     }, this),
                                                     "View Details"
                                                 ]
                                             }, void 0, true, {
                                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                                lineNumber: 497,
+                                                lineNumber: 885,
                                                 columnNumber: 19
                                             }, this)
                                         ]
                                     }, void 0, true, {
                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                        lineNumber: 489,
+                                        lineNumber: 877,
                                         columnNumber: 17
                                     }, this)
                                 ]
                             }, template.template_id, true, {
                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                lineNumber: 474,
+                                lineNumber: 862,
                                 columnNumber: 15
                             }, this)),
                         filteredTemplates.length === 0 && /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("div", {
@@ -2365,7 +2756,7 @@ function TemplatesPage() {
                                         className: "mx-auto h-12 w-12 text-muted-foreground opacity-20"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                        lineNumber: 512,
+                                        lineNumber: 900,
                                         columnNumber: 19
                                     }, this),
                                     /*#__PURE__*/ (0, __TURBOPACK__imported__module__$5b$project$5d2f$node_modules$2f$next$2f$dist$2f$server$2f$route$2d$modules$2f$app$2d$page$2f$vendored$2f$ssr$2f$react$2d$jsx$2d$dev$2d$runtime$2e$js__$5b$app$2d$ssr$5d$__$28$ecmascript$29$__["jsxDEV"])("p", {
@@ -2373,35 +2764,35 @@ function TemplatesPage() {
                                         children: "No templates found"
                                     }, void 0, false, {
                                         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                        lineNumber: 513,
+                                        lineNumber: 901,
                                         columnNumber: 19
                                     }, this)
                                 ]
                             }, void 0, true, {
                                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                                lineNumber: 511,
+                                lineNumber: 899,
                                 columnNumber: 17
                             }, this)
                         }, void 0, false, {
                             fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                            lineNumber: 510,
+                            lineNumber: 898,
                             columnNumber: 15
                         }, this)
                     ]
                 }, void 0, true, {
                     fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                    lineNumber: 472,
+                    lineNumber: 860,
                     columnNumber: 11
                 }, this)
             }, void 0, false, {
                 fileName: "[project]/app/(dashboard)/templates/page.tsx",
-                lineNumber: 463,
+                lineNumber: 851,
                 columnNumber: 7
             }, this)
         ]
     }, void 0, true, {
         fileName: "[project]/app/(dashboard)/templates/page.tsx",
-        lineNumber: 213,
+        lineNumber: 590,
         columnNumber: 5
     }, this);
 }
