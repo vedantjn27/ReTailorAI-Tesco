@@ -40,6 +40,355 @@ interface TemplateDetails {
   }>
 }
 
+// Demo templates data
+const DEMO_TEMPLATES: Template[] = [
+  {
+    template_id: "demo_1",
+    template_name: "Product Banner",
+    width: 1200,
+    height: 628,
+    layers_count: 3
+  },
+  {
+    template_id: "demo_2",
+    template_name: "Social Media Post",
+    width: 1080,
+    height: 1080,
+    layers_count: 4
+  },
+  {
+    template_id: "demo_3",
+    template_name: "Email Header",
+    width: 600,
+    height: 400,
+    layers_count: 2
+  },
+  {
+    template_id: "demo_4",
+    template_name: "Display Ad",
+    width: 728,
+    height: 90,
+    layers_count: 3
+  },
+  {
+    template_id: "demo_5",
+    template_name: "Story Template",
+    width: 1080,
+    height: 1920,
+    layers_count: 5
+  },
+  {
+    template_id: "demo_6",
+    template_name: "Product Card",
+    width: 800,
+    height: 1000,
+    layers_count: 4
+  }
+]
+
+const DEMO_TEMPLATE_DETAILS: Record<string, TemplateDetails> = {
+  demo_1: {
+    template_id: "demo_1",
+    template_name: "Product Banner",
+    width: 1200,
+    height: 628,
+    layers: [
+      {
+        layer_id: "layer_1",
+        layer_name: "Background",
+        type: "rectangle",
+        content: "",
+        x: 0,
+        y: 0,
+        width: 1200,
+        height: 628,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_2",
+        layer_name: "Product Image",
+        type: "image",
+        content: "",
+        x: 100,
+        y: 114,
+        width: 400,
+        height: 400,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_3",
+        layer_name: "Title Text",
+        type: "text",
+        content: "Product Title",
+        x: 550,
+        y: 264,
+        width: 500,
+        height: 100,
+        visible: true,
+        locked: false
+      }
+    ]
+  },
+  demo_2: {
+    template_id: "demo_2",
+    template_name: "Social Media Post",
+    width: 1080,
+    height: 1080,
+    layers: [
+      {
+        layer_id: "layer_1",
+        layer_name: "Background",
+        type: "rectangle",
+        content: "",
+        x: 0,
+        y: 0,
+        width: 1080,
+        height: 1080,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_2",
+        layer_name: "Main Image",
+        type: "image",
+        content: "",
+        x: 90,
+        y: 90,
+        width: 900,
+        height: 600,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_3",
+        layer_name: "Header",
+        type: "text",
+        content: "Header",
+        x: 90,
+        y: 740,
+        width: 900,
+        height: 120,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_4",
+        layer_name: "Logo",
+        type: "image",
+        content: "",
+        x: 90,
+        y: 900,
+        width: 150,
+        height: 150,
+        visible: true,
+        locked: false
+      }
+    ]
+  },
+  demo_3: {
+    template_id: "demo_3",
+    template_name: "Email Header",
+    width: 600,
+    height: 400,
+    layers: [
+      {
+        layer_id: "layer_1",
+        layer_name: "Background",
+        type: "rectangle",
+        content: "",
+        x: 0,
+        y: 0,
+        width: 600,
+        height: 400,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_2",
+        layer_name: "Title",
+        type: "text",
+        content: "Email Header",
+        x: 50,
+        y: 150,
+        width: 500,
+        height: 100,
+        visible: true,
+        locked: false
+      }
+    ]
+  },
+  demo_4: {
+    template_id: "demo_4",
+    template_name: "Display Ad",
+    width: 728,
+    height: 90,
+    layers: [
+      {
+        layer_id: "layer_1",
+        layer_name: "Background",
+        type: "rectangle",
+        content: "",
+        x: 0,
+        y: 0,
+        width: 728,
+        height: 90,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_2",
+        layer_name: "Logo",
+        type: "image",
+        content: "",
+        x: 10,
+        y: 10,
+        width: 70,
+        height: 70,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_3",
+        layer_name: "Ad Text",
+        type: "text",
+        content: "Ad Message",
+        x: 100,
+        y: 20,
+        width: 600,
+        height: 50,
+        visible: true,
+        locked: false
+      }
+    ]
+  },
+  demo_5: {
+    template_id: "demo_5",
+    template_name: "Story Template",
+    width: 1080,
+    height: 1920,
+    layers: [
+      {
+        layer_id: "layer_1",
+        layer_name: "Background",
+        type: "rectangle",
+        content: "",
+        x: 0,
+        y: 0,
+        width: 1080,
+        height: 1920,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_2",
+        layer_name: "Hero Image",
+        type: "image",
+        content: "",
+        x: 90,
+        y: 200,
+        width: 900,
+        height: 900,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_3",
+        layer_name: "Title",
+        type: "text",
+        content: "Story Title",
+        x: 90,
+        y: 1150,
+        width: 900,
+        height: 150,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_4",
+        layer_name: "Description",
+        type: "text",
+        content: "Description text",
+        x: 90,
+        y: 1350,
+        width: 900,
+        height: 200,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_5",
+        layer_name: "CTA Button",
+        type: "button",
+        content: "Shop Now",
+        x: 340,
+        y: 1650,
+        width: 400,
+        height: 100,
+        visible: true,
+        locked: false
+      }
+    ]
+  },
+  demo_6: {
+    template_id: "demo_6",
+    template_name: "Product Card",
+    width: 800,
+    height: 1000,
+    layers: [
+      {
+        layer_id: "layer_1",
+        layer_name: "Background",
+        type: "rectangle",
+        content: "",
+        x: 0,
+        y: 0,
+        width: 800,
+        height: 1000,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_2",
+        layer_name: "Product Image",
+        type: "image",
+        content: "",
+        x: 100,
+        y: 100,
+        width: 600,
+        height: 500,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_3",
+        layer_name: "Product Name",
+        type: "text",
+        content: "Product Name",
+        x: 100,
+        y: 650,
+        width: 600,
+        height: 100,
+        visible: true,
+        locked: false
+      },
+      {
+        layer_id: "layer_4",
+        layer_name: "Price",
+        type: "text",
+        content: "$99.99",
+        x: 100,
+        y: 800,
+        width: 600,
+        height: 80,
+        visible: true,
+        locked: false
+      }
+    ]
+  }
+}
+
 export default function TemplatesPage() {
   const [templates, setTemplates] = useState<Template[]>([])
   const [loading, setLoading] = useState(true)
@@ -50,6 +399,7 @@ export default function TemplatesPage() {
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [selectedTemplate, setSelectedTemplate] = useState<TemplateDetails | null>(null)
   const [loadingDetails, setLoadingDetails] = useState(false)
+  const [isDemoMode, setIsDemoMode] = useState(false)
   const router = useRouter()
   const { toast } = useToast()
 
@@ -77,13 +427,13 @@ export default function TemplatesPage() {
       const result = await response.json()
       console.log("Loaded templates:", result.templates)
       setTemplates(result.templates || [])
+      setIsDemoMode(false)
     } catch (error) {
-      console.error("Error loading templates:", error)
-      toast({
-        title: "Error",
-        description: "Failed to load templates",
-        variant: "destructive",
-      })
+      console.error("Error loading templates, switching to demo mode:", error)
+      // Switch to demo mode
+      setTemplates(DEMO_TEMPLATES)
+      setIsDemoMode(true)
+      
     } finally {
       setLoading(false)
     }
@@ -92,7 +442,20 @@ export default function TemplatesPage() {
   const handleViewDetails = async (templateId: string) => {
     setLoadingDetails(true)
     setIsDetailsDialogOpen(true)
+    
     try {
+      if (isDemoMode) {
+        // Use demo data
+        setTimeout(() => {
+          const demoTemplate = DEMO_TEMPLATE_DETAILS[templateId]
+          if (demoTemplate) {
+            setSelectedTemplate(demoTemplate)
+          }
+          setLoadingDetails(false)
+        }, 500) // Simulate network delay
+        return
+      }
+
       const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
       const response = await fetch(`${baseURL}/templates/${templateId}`)
       
@@ -102,6 +465,7 @@ export default function TemplatesPage() {
 
       const data = await response.json()
       setSelectedTemplate(data.template)
+      setLoadingDetails(false)
     } catch (error) {
       toast({
         title: "Error",
@@ -109,12 +473,20 @@ export default function TemplatesPage() {
         variant: "destructive",
       })
       setIsDetailsDialogOpen(false)
-    } finally {
       setLoadingDetails(false)
     }
   }
 
   const handleUseTemplate = async (templateId: string) => {
+    if (isDemoMode) {
+      toast({
+        title: "Demo Mode",
+        description: "Template application is not available in demo mode",
+        variant: "destructive",
+      })
+      return
+    }
+
     setLoading(true)
     try {
       // Create new project
@@ -141,12 +513,19 @@ export default function TemplatesPage() {
   }
 
   const handleAddTemplate = async () => {
+    if (isDemoMode) {
+      toast({
+        title: "Demo Mode",
+        description: "Adding templates is not available in demo mode",
+        variant: "destructive",
+      })
+      return
+    }
+
     setIsSubmitting(true)
     try {
-      // Use the same base URL pattern as your apiClient
       const baseURL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
       
-      // Create empty layers array based on layers_count
       const layersCount = parseInt(formData.layers_count)
       const layers = Array.from({ length: layersCount }, (_, i) => ({
         layer_id: `layer_${Date.now()}_${i}`,
@@ -183,7 +562,6 @@ export default function TemplatesPage() {
         description: "Template added successfully",
       })
 
-      // Reset form
       setFormData({
         template_name: "",
         width: "",
@@ -192,7 +570,6 @@ export default function TemplatesPage() {
       })
       setIsAddDialogOpen(false)
 
-      // Reload templates
       loadTemplates()
     } catch (error) {
       toast({
@@ -215,7 +592,14 @@ export default function TemplatesPage() {
       <div className="border-b border-border bg-card px-8 py-6">
         <div className="flex items-center justify-between">
           <div>
-            <h1 className="text-3xl font-bold tracking-tight">Template Library</h1>
+            <div className="flex items-center gap-3">
+              <h1 className="text-3xl font-bold tracking-tight">Template Library</h1>
+              {isDemoMode && (
+                <Badge variant="secondary" className="text-xs">
+                  Demo Mode
+                </Badge>
+              )}
+            </div>
             <p className="mt-1 text-muted-foreground">Pre-designed layouts optimized for retail media</p>
           </div>
           <div className="flex gap-2">
@@ -263,6 +647,7 @@ export default function TemplatesPage() {
                                   setIsListDialogOpen(false)
                                   handleUseTemplate(template.template_id)
                                 }}
+                                disabled={isDemoMode}
                               >
                                 Use
                               </Button>
@@ -278,7 +663,7 @@ export default function TemplatesPage() {
 
             <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
               <DialogTrigger asChild>
-                <Button>
+                <Button disabled={isDemoMode}>
                   <Plus className="mr-2 h-4 w-4" />
                   Add Template
                 </Button>
@@ -433,10 +818,13 @@ export default function TemplatesPage() {
               Close
             </Button>
             {selectedTemplate && (
-              <Button onClick={() => {
-                setIsDetailsDialogOpen(false)
-                handleUseTemplate(selectedTemplate.template_id)
-              }}>
+              <Button 
+                onClick={() => {
+                  setIsDetailsDialogOpen(false)
+                  handleUseTemplate(selectedTemplate.template_id)
+                }}
+                disabled={isDemoMode}
+              >
                 Use This Template
               </Button>
             )}
@@ -490,9 +878,9 @@ export default function TemplatesPage() {
                   <Button 
                     className="w-full" 
                     onClick={() => handleUseTemplate(template.template_id)} 
-                    disabled={loading}
+                    disabled={loading || isDemoMode}
                   >
-                    Use Template
+                    {isDemoMode ? "Use Template" : "Use Template"}
                   </Button>
                   <Button 
                     className="w-full" 
