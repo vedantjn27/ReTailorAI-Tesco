@@ -141,4 +141,6 @@ ReTailor AI scales from 500 advertisers in Year 1 to 50,000+ by Year 4, growing 
 
 Drive Link For Demo Video (Click To Open) : https://drive.google.com/file/d/1wdw4k2EZBaKM-G90gUzZ9g4IUIq8b2aD/view?usp=sharing
 
+To setup your project setup.txt , requirements.txt and project_structure.txt are provided in the repository.The frontend folder also contains the BACKEND_INTEGRATION_STATUS.md file for seamless integration of your ferontend with the backend.
+
 "ReTailor AI turns retail media from a creative grind into a creative goldmine—giving every brand the power to punch above its weight"
