@@ -12,17 +12,24 @@ import { Progress } from "@/components/ui/progress"
 interface SavedProject {
   id: string
   name: string
-  status: "active" | "draft" | "completed"
-  createdAt: string
-  thumbnail: string | null
-  assetsCount: number
-  progress: number
+  width: number
+  height: number
+  background_color: string
+  layers_count: number
+  created_at: string
+  updated_at: string
 }
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
 
 export default function DashboardPage() {
   const [recentProjects, setRecentProjects] = useState<SavedProject[]>([])
+  const [stats, setStats] = useState({
+    totalProjects: 0,
+    activeProjects: 0,
+    totalAssets: 156,
+    exportsThisMonth: 342,
+  })
   const [demoMode, setDemoMode] = useState(() => {
     if (typeof window !== "undefined") {
       return localStorage.getItem("demo_mode") === "true"
@@ -68,32 +75,28 @@ export default function DashboardPage() {
     checkBackendConnection()
   }, [])
 
+  // Fetch real projects from backend
   useEffect(() => {
-    const loadProjects = () => {
-      const savedProjects = JSON.parse(localStorage.getItem("retailor_projects") || "[]")
-      setRecentProjects(savedProjects.reverse().slice(0, 6))
+    const fetchProjects = async () => {
+      try {
+        const res = await fetch(`${API_BASE_URL}/editor/projects`)
+        if (res.ok) {
+          const data = await res.json()
+          setRecentProjects((data.projects || []).slice(0, 6))
+          setStats(prev => ({
+            ...prev,
+            totalProjects: (data.projects || []).length,
+            activeProjects: (data.projects || []).filter((p: SavedProject) => p.layers_count > 0).length,
+          }))
+        }
+      } catch (err) {
+        console.error("[Dashboard] Failed to load backend projects:", err)
+      }
     }
-    loadProjects()
-
-    // Refresh every 2 seconds to catch updates
-    const interval = setInterval(loadProjects, 2000)
+    fetchProjects()
+    const interval = setInterval(fetchProjects, 5000)
     return () => clearInterval(interval)
   }, [])
-
-  const [stats, setStats] = useState({
-    totalProjects: 0,
-    activeProjects: 0,
-    totalAssets: 156,
-    exportsThisMonth: 342,
-  })
-
-  useEffect(() => {
-    setStats((prev) => ({
-      ...prev,
-      totalProjects: recentProjects.length,
-      activeProjects: recentProjects.filter((p) => p.status === "active").length,
-    }))
-  }, [recentProjects])
 
   const quickActions = [
     {
@@ -326,48 +329,33 @@ export default function DashboardPage() {
                       className="overflow-hidden transition-all hover:shadow-lg hover:border-primary/50"
                     >
                       <div className="aspect-video w-full overflow-hidden bg-muted relative group">
-                        {project.thumbnail ? (
-                          <img
-                            src={project.thumbnail || "/placeholder.svg"}
-                            alt={project.name}
-                            className="h-full w-full object-cover transition-transform group-hover:scale-110"
-                          />
-                        ) : (
-                          <div className="h-full w-full flex items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
-                            <Image className="h-12 w-12 text-muted-foreground" />
-                          </div>
-                        )}
+                        <div className="h-full w-full flex flex-col items-center justify-center bg-gradient-to-br from-primary/20 to-accent/20">
+                          <Image className="h-10 w-10 text-muted-foreground mb-1" />
+                          <span className="text-xs text-muted-foreground">{project.width}×{project.height}px</span>
+                        </div>
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                       </div>
                       <CardHeader>
                         <div className="flex items-start justify-between">
                           <div className="flex-1">
-                            <CardTitle className="text-base text-balance">{project.name}</CardTitle>
+                            <CardTitle className="text-base text-balance">{project.name || "Untitled Project"}</CardTitle>
                             <CardDescription className="mt-1 flex items-center gap-2">
                               <Clock className="h-3 w-3" />
-                              {new Date(project.createdAt).toLocaleDateString()}
+                              {project.created_at ? new Date(project.created_at).toLocaleDateString() : "Unknown date"}
                             </CardDescription>
                           </div>
-                          <Badge
-                            variant={
-                              project.status === "active"
-                                ? "default"
-                                : project.status === "completed"
-                                  ? "secondary"
-                                  : "outline"
-                            }
-                          >
-                            {project.status}
+                          <Badge variant="outline" className="text-xs">
+                            {project.layers_count || 0} layers
                           </Badge>
                         </div>
                       </CardHeader>
                       <CardContent>
                         <div className="space-y-3">
                           <div className="flex items-center justify-between text-sm">
-                            <span className="text-muted-foreground">{project.assetsCount} assets</span>
-                            <span className="text-muted-foreground">{project.progress}% complete</span>
+                            <span className="text-muted-foreground text-xs">Synced from backend</span>
+                            <span className="text-muted-foreground text-xs">{project.width}×{project.height}</span>
                           </div>
-                          <Progress value={project.progress} className="h-2" />
+                          <Progress value={project.layers_count > 0 ? Math.min(100, project.layers_count * 10) : 5} className="h-2" />
                           <Link href={`/editor?project=${project.id}`}>
                             <Button size="sm" variant="outline" className="w-full bg-transparent">
                               Open Project

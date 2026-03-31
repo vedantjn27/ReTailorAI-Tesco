@@ -1,25 +1,9 @@
 "use client"
 
-import { DialogTrigger } from "@/components/ui/dialog"
-import { SelectItem } from "@/components/ui/select"
-import { SelectContent } from "@/components/ui/select"
-import { SelectTrigger as Trigger } from "@/components/ui/select"
-import { Select, SelectGroup } from "@/components/ui/select"
-import { Separator } from "@/components/ui/separator"
-import { useState, useRef, useEffect } from "react"
+import { useState, useRef, useEffect, useCallback } from "react"
 import {
-  ImageIcon,
-  Type,
-  Download,
-  Trash2,
-  ZoomIn,
-  ZoomOut,
-  Grid3x3,
-  Undo2,
-  Redo2,
-  Eye,
-  Copy,
-  Edit3,
+  ImageIcon, Type, Download, Trash2, ZoomIn, ZoomOut,
+  Grid3x3, Undo2, Redo2, Copy, Check, X, Wand2, Sparkles, SlidersHorizontal, Settings2, Plus
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -27,870 +11,958 @@ import { Label } from "@/components/ui/label"
 import { Card } from "@/components/ui/card"
 import { Slider } from "@/components/ui/slider"
 import { useToast } from "@/hooks/use-toast"
-import { apiClient, type EditorProject, type Layer } from "@/lib/api-client"
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
+  Dialog, DialogContent, DialogDescription,
+  DialogFooter, DialogHeader, DialogTitle,
 } from "@/components/ui/dialog"
 import { Badge } from "@/components/ui/badge"
 import { Textarea } from "@/components/ui/textarea"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+
+const API_BASE = process.env.NEXT_PUBLIC_API_URL || "http://localhost:8000"
+
+type LayerType = "image" | "text"
+
+interface CanvasLayer {
+  layer_id: string
+  type: LayerType
+  x: number
+  y: number
+  width?: number
+  height?: number
+  file_id?: string
+  imageUrl?: string
+  text?: string
+  font_size?: number
+  color?: string
+  rotation?: number
+  opacity?: number
+}
+
+interface CanvasProject {
+  project_id: string
+  name: string
+  width: number
+  height: number
+  background_color: string
+  layers: CanvasLayer[]
+}
+
+type Handle = "nw" | "n" | "ne" | "e" | "se" | "s" | "sw" | "w"
+const HANDLES: Handle[] = ["nw", "n", "ne", "e", "se", "s", "sw", "w"]
+
+const handleCursor: Record<Handle, string> = {
+  nw: "nw-resize", n: "n-resize", ne: "ne-resize",
+  e: "e-resize", se: "se-resize", s: "s-resize",
+  sw: "sw-resize", w: "w-resize",
+}
+
+function getHandlePos(layer: CanvasLayer, handle: Handle, zoom: number) {
+  const w = (layer.width ?? 200) * zoom
+  const h = (layer.height ?? 60) * zoom
+  const cx = layer.x * zoom, cy = layer.y * zoom
+  switch (handle) {
+    case "nw": return { left: cx - 5, top: cy - 5 }
+    case "n":  return { left: cx + w / 2 - 5, top: cy - 5 }
+    case "ne": return { left: cx + w - 5, top: cy - 5 }
+    case "e":  return { left: cx + w - 5, top: cy + h / 2 - 5 }
+    case "se": return { left: cx + w - 5, top: cy + h - 5 }
+    case "s":  return { left: cx + w / 2 - 5, top: cy + h - 5 }
+    case "sw": return { left: cx - 5, top: cy + h - 5 }
+    case "w":  return { left: cx - 5, top: cy + h / 2 - 5 }
+  }
+}
 
 export default function EditorPage() {
-  const [project, setProject] = useState<EditorProject | null>(null)
-  const [projectName, setProjectName] = useState<string>("")
+  const [project, setProject] = useState<CanvasProject | null>(null)
+  const [projectName, setProjectName] = useState("")
   const [showNameDialog, setShowNameDialog] = useState(false)
-  const [selectedLayer, setSelectedLayer] = useState<Layer | null>(null)
+  const [selectedLayerId, setSelectedLayerId] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [canvasSize, setCanvasSize] = useState({ width: 1080, height: 1080 })
-  const [zoom, setZoom] = useState(0.7)
+  const [zoom, setZoom] = useState(0.55)
   const [showGrid, setShowGrid] = useState(false)
-  const [editingText, setEditingText] = useState<string>("")
+  const [history, setHistory] = useState<CanvasLayer[][]>([])
+  const [future, setFuture] = useState<CanvasLayer[][]>([])
+  const [editingLayerId, setEditingLayerId] = useState<string | null>(null)
+  const [inlineText, setInlineText] = useState("")
   const { toast } = useToast()
   const canvasRef = useRef<HTMLDivElement>(null)
   const fileInputRef = useRef<HTMLInputElement>(null)
+  
+  // AI Co-pilot State
+  const [aiProduct, setAiProduct] = useState("")
+  const [aiDesc, setAiDesc] = useState("")
+  const [aiTone, setAiTone] = useState("professional")
+  const [aiPlatform, setAiPlatform] = useState("instagram")
+  const [aiResults, setAiResults] = useState<any>(null)
+  const [aiLoading, setAiLoading] = useState(false)
+
+  // Drag state
+  const dragState = useRef<{
+    active: boolean
+    layerId: string
+    startX: number; startY: number
+    origX: number; origY: number
+  } | null>(null)
+
+  // Resize state
+  const resizeState = useRef<{
+    active: boolean
+    layerId: string
+    handle: Handle
+    startX: number; startY: number
+    origX: number; origY: number
+    origW: number; origH: number
+  } | null>(null)
 
   useEffect(() => {
-    setShowNameDialog(true)
+    const params = new URLSearchParams(window.location.search)
+    const pid = params.get("project")
+    if (pid) {
+      loadExistingProject(pid)
+    } else {
+      setShowNameDialog(true)
+    }
   }, [])
+
+  const loadExistingProject = async (pid: string) => {
+    setLoading(true)
+    try {
+      const res = await fetch(`${API_BASE}/editor/${pid}`)
+      if (!res.ok) throw new Error("Project not found")
+      const data = await res.json()
+      setProject({
+        project_id: data._id || pid,
+        name: data.name || "Untitled Project",
+        width: data.width,
+        height: data.height,
+        background_color: data.background_color,
+        layers: (data.layers || []).map((l: any) => ({
+          ...l,
+          width: l.width ?? (l.type === "text" ? 400 : 300),
+          height: l.height ?? (l.type === "text" ? 80 : 300),
+        })),
+      })
+      setCanvasSize({ width: data.width, height: data.height })
+    } catch (e: any) {
+      toast({ title: "Failed to load project", description: e.message, variant: "destructive" })
+      setShowNameDialog(true)
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const initializeProject = async (name: string) => {
     setLoading(true)
     try {
-      const result = await apiClient.createProject(canvasSize.width, canvasSize.height)
-      const projectData = await apiClient.getProject(result.project_id)
-      setProject(projectData)
-      setProjectName(name)
-
-      const savedProjects = JSON.parse(localStorage.getItem("retailor_projects") || "[]")
-      savedProjects.push({
-        id: result.project_id,
-        name: name,
-        status: "active",
-        createdAt: new Date().toISOString(),
-        thumbnail: null,
-        assetsCount: 0,
-        progress: 0,
-      })
-      localStorage.setItem("retailor_projects", JSON.stringify(savedProjects))
-
-      toast({
-        title: "Project Created",
-        description: (
-          <div className="space-y-2">
-            <p>Project "{name}" created successfully</p>
-            <div className="flex items-center gap-2 p-2 bg-muted rounded">
-              <span className="text-xs font-mono">{result.project_id}</span>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="h-6 w-6 p-0"
-                onClick={() => {
-                  navigator.clipboard.writeText(result.project_id)
-                  toast({ title: "Copied!", description: "Project ID copied to clipboard" })
-                }}
-              >
-                <Copy className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-        ),
-      })
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create project",
-        variant: "destructive",
-      })
+      const res = await fetch(
+        `${API_BASE}/editor/create-project?name=${encodeURIComponent(name)}&width=${canvasSize.width}&height=${canvasSize.height}`,
+        { method: "POST" }
+      )
+      if (!res.ok) throw new Error("Failed to create project")
+      const data = await res.json()
+      setProject({ project_id: data.project_id, name, width: canvasSize.width, height: canvasSize.height, background_color: "#FFFFFF", layers: [] })
+      setShowNameDialog(false)
+      toast({ title: `✅ Canvas ready!`, description: `${name} — ${canvasSize.width}×${canvasSize.height}px` })
+    } catch (e: any) {
+      toast({ title: "Error creating project", description: e.message, variant: "destructive" })
     } finally {
       setLoading(false)
     }
   }
 
-  const handleAddImage = async (file: File) => {
+  // Dimension Change Auto-scaling logic
+  const handleResizeCanvas = (dimString: string) => {
     if (!project) return
+    const [newW, newH] = dimString.split("x").map(Number)
+    
+    // Auto-scale ratio
+    const scaleX = newW / project.width
+    const scaleY = newH / project.height
 
+    const updatedLayers = project.layers.map(l => ({
+      ...l,
+      x: l.x * scaleX,
+      y: l.y * scaleY,
+      width: l.width ? l.width * scaleX : undefined,
+      height: l.height ? l.height * scaleY : undefined,
+      font_size: l.type === 'text' && l.font_size ? Math.round(l.font_size * Math.min(scaleX, scaleY)) : l.font_size
+    }))
+    
+    updateLayers(updatedLayers, true)
+    setProject(prev => prev ? ({ ...prev, width: newW, height: newH, layers: updatedLayers }) : null)
+    setCanvasSize({ width: newW, height: newH })
+    toast({ title: `Canvas Resized & Auto-scaled to ${newW}x${newH}` })
+  }
+
+  // AI Integration function
+  const generateAICopy = async () => {
+    if (!aiProduct) { toast({title: "Product Name required", variant:"destructive"}); return; }
+    setAiLoading(true)
+    try {
+      const res = await fetch(`${API_BASE}/ai/copy-suggestions`, {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ product_name: aiProduct, product_description: aiDesc, tone: aiTone, platform: aiPlatform })
+      })
+      if (!res.ok) throw new Error("AI generation failed")
+      const data = await res.json()
+      setAiResults(data.suggestions || data)
+      toast({ title: "Creative ideas generated!" })
+    } catch(e:any) {
+      toast({ title: "Failed to connect to Mistral AI", description: e.message, variant: "destructive" })
+    } finally {
+      setAiLoading(false)
+    }
+  }
+
+  const injectAiTextToCanvas = (textStr: string, size: number = 42, color: string = "#000000") => {
+    if (!project) return
+    const newLayer: CanvasLayer = {
+      layer_id: `layer_${Date.now()}`,
+      type: "text",
+      text: textStr,
+      font_size: size,
+      color: color,
+      x: project.width * 0.1,
+      y: project.height * 0.4,
+      width: Math.min(600, project.width * 0.8),
+      height: size * 1.5,
+      rotation: 0,
+      opacity: 1,
+    }
+    updateLayers([...project.layers, newLayer])
+    setSelectedLayerId(newLayer.layer_id)
+    toast({ title: "Added to canvas!" })
+  }
+
+  // Snapshot for undo
+  const pushHistory = useCallback((layers: CanvasLayer[]) => {
+    setHistory(prev => [...prev.slice(-30), [...layers]])
+    setFuture([])
+  }, [])
+
+  const undo = () => {
+    if (!project || history.length === 0) return
+    setFuture(prev => [[...project.layers], ...prev])
+    const prev = history[history.length - 1]
+    setHistory(h => h.slice(0, -1))
+    setProject(p => p ? { ...p, layers: prev } : null)
+  }
+
+  const redo = () => {
+    if (!project || future.length === 0) return
+    setHistory(prev => [...prev, [...project.layers]])
+    const next = future[0]
+    setFuture(f => f.slice(1))
+    setProject(p => p ? { ...p, layers: next } : null)
+  }
+
+  const updateLayers = (layers: CanvasLayer[], snapshot = true) => {
+    if (!project) return
+    if (snapshot) pushHistory(project.layers)
+    setProject(p => p ? { ...p, layers } : null)
+  }
+
+  const selectedLayer = project?.layers.find(l => l.layer_id === selectedLayerId) ?? null
+
+  const onLayerMouseDown = (e: React.MouseEvent, layerId: string) => {
+    e.stopPropagation()
+    if (editingLayerId) return
+    setSelectedLayerId(layerId)
+    const layer = project!.layers.find(l => l.layer_id === layerId)!
+    dragState.current = {
+      active: true, layerId,
+      startX: e.clientX, startY: e.clientY,
+      origX: layer.x, origY: layer.y,
+    }
+  }
+
+  const onHandleMouseDown = (e: React.MouseEvent, layerId: string, handle: Handle) => {
+    e.stopPropagation()
+    e.preventDefault()
+    const layer = project!.layers.find(l => l.layer_id === layerId)!
+    resizeState.current = {
+      active: true, layerId, handle,
+      startX: e.clientX, startY: e.clientY,
+      origX: layer.x, origY: layer.y,
+      origW: layer.width ?? 200,
+      origH: layer.height ?? 100,
+    }
+    pushHistory(project!.layers)
+  }
+
+  const onMouseMove = useCallback((e: MouseEvent) => {
+    if (dragState.current?.active) {
+      const { layerId, startX, startY, origX, origY } = dragState.current
+      const dx = (e.clientX - startX) / zoom
+      const dy = (e.clientY - startY) / zoom
+      setProject(p => p ? {
+        ...p,
+        layers: p.layers.map(l => l.layer_id === layerId ? { ...l, x: Math.round(origX + dx), y: Math.round(origY + dy) } : l)
+      } : null)
+    }
+    if (resizeState.current?.active) {
+      const { layerId, handle, startX, startY, origX, origY, origW, origH } = resizeState.current
+      const dx = (e.clientX - startX) / zoom
+      const dy = (e.clientY - startY) / zoom
+      let x = origX, y = origY, w = origW, h = origH
+      if (handle.includes("e")) w = Math.max(40, origW + dx)
+      if (handle.includes("s")) h = Math.max(20, origH + dy)
+      if (handle.includes("w")) { x = origX + dx; w = Math.max(40, origW - dx) }
+      if (handle.includes("n")) { y = origY + dy; h = Math.max(20, origH - dy) }
+      setProject(p => p ? {
+        ...p,
+        layers: p.layers.map(l => l.layer_id === layerId
+          ? { ...l, x: Math.round(x), y: Math.round(y), width: Math.round(w), height: Math.round(h) }
+          : l)
+      } : null)
+    }
+  }, [zoom])
+
+  const onMouseUp = useCallback(() => {
+    if (dragState.current?.active) {
+      pushHistory(project?.layers.map(l => l.layer_id === dragState.current!.layerId
+        ? { ...l } : l) ?? [])
+      dragState.current = null
+    }
+    if (resizeState.current?.active) {
+      resizeState.current = null
+    }
+  }, [project, pushHistory])
+
+  useEffect(() => {
+    window.addEventListener("mousemove", onMouseMove)
+    window.addEventListener("mouseup", onMouseUp)
+    return () => {
+      window.removeEventListener("mousemove", onMouseMove)
+      window.removeEventListener("mouseup", onMouseUp)
+    }
+  }, [onMouseMove, onMouseUp])
+
+  const handleDoubleClick = (e: React.MouseEvent, layer: CanvasLayer) => {
+    e.stopPropagation()
+    if (layer.type === "text") {
+      setEditingLayerId(layer.layer_id)
+      setInlineText(layer.text ?? "")
+    }
+  }
+
+  const commitTextEdit = () => {
+    if (!editingLayerId || !project) return
+    const layers = project.layers.map(l =>
+      l.layer_id === editingLayerId ? { ...l, text: inlineText } : l
+    )
+    updateLayers(layers)
+    setEditingLayerId(null)
+  }
+
+  const addTextLayer = () => {
+    if (!project) return
+    const newLayer: CanvasLayer = {
+      layer_id: `layer_${Date.now()}`,
+      type: "text",
+      text: "New Text",
+      font_size: 48,
+      color: "#FFFFFF",
+      x: project.width / 2 - 100,
+      y: project.height / 2,
+      width: 400,
+      height: 80,
+      rotation: 0,
+      opacity: 1,
+    }
+    updateLayers([...project.layers, newLayer])
+    setSelectedLayerId(newLayer.layer_id)
+    setEditingLayerId(newLayer.layer_id)
+    setInlineText("New Text")
+  }
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0] || !project) return
+    const file = e.target.files[0]
     setLoading(true)
     try {
-      const result = await apiClient.addImageLayer(project._id, file, {
-        x: 100,
-        y: 100,
-        width: 400,
-        height: 400,
-      })
-
-      const updated = await apiClient.getProject(project._id)
-      setProject(updated)
-
-      toast({
-        title: "Image Added",
-        description: "Image layer added to canvas",
-      })
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add image",
-        variant: "destructive",
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleAddText = async () => {
-    if (!project) return
-
-    setLoading(true)
-    try {
-      const result = await apiClient.addTextLayer(project._id, "New Text", {
-        font_size: 48,
-        color: "#000000",
-        x: 150,
-        y: 150,
-      })
-
-      const updated = await apiClient.getProject(project._id)
-      setProject(updated)
-
-      toast({
-        title: "Text Added",
-        description: "Text layer added to canvas",
-      })
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to add text",
-        variant: "destructive",
-      })
-    } finally {
-      setLoading(false)
-    }
-  }
-
-  const handleUpdateLayer = async (layerId: string, updates: Partial<Layer>) => {
-    if (!project) return
-
-    try {
-      await apiClient.updateLayer(project._id, layerId, updates)
-      const updated = await apiClient.getProject(project._id)
-      setProject(updated)
-
-      if (selectedLayer?.layer_id === layerId) {
-        const updatedLayer = updated.layers.find((l) => l.layer_id === layerId)
-        setSelectedLayer(updatedLayer || null)
-        if (updatedLayer?.type === "text") {
-          setEditingText(updatedLayer.text || "")
-        }
+      const formData = new FormData()
+      formData.append("file", file)
+      const uploadRes = await fetch(`${API_BASE}/upload-asset`, { method: "POST", body: formData })
+      if (!uploadRes.ok) throw new Error("Upload failed")
+      const uploadData = await uploadRes.json()
+      const imageUrl = `${API_BASE}/asset/${uploadData.file_id}`
+      const newLayer: CanvasLayer = {
+        layer_id: `layer_${Date.now()}`,
+        type: "image",
+        file_id: uploadData.file_id,
+        imageUrl,
+        x: project.width > 400 ? project.width / 2 - 200 : 50, y: 50,
+        width: 400, height: 400,
+        rotation: 0, opacity: 1,
       }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update layer",
-        variant: "destructive",
-      })
+      updateLayers([...project.layers, newLayer])
+      setSelectedLayerId(newLayer.layer_id)
+      toast({ title: "✅ Image added!" })
+    } catch (err: any) {
+      toast({ title: "Upload failed", description: err.message, variant: "destructive" })
+    } finally {
+      setLoading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ""
     }
   }
 
-  const handleExport = async () => {
-    if (!project) return
-
+  const removeBackground = async () => {
+    if (!selectedLayer || selectedLayer.type !== "image" || !selectedLayer.file_id) return
     setLoading(true)
     try {
-      const result = await apiClient.renderProject(project._id)
-      const downloadUrl = apiClient.getAssetUrl(result.rendered_file_id)
-
-      const link = document.createElement("a")
-      link.href = downloadUrl
-      link.download = `${projectName || "project"}.png`
-      link.click()
-
-      toast({
-        title: "Export Complete",
-        description: (
-          <div className="space-y-2">
-            <p>Project rendered successfully</p>
-            <div className="flex items-center gap-2 p-2 bg-muted rounded">
-              <span className="text-xs font-mono">{result.rendered_file_id}</span>
-              <Button
-                size="sm"
-                variant="ghost"
-                className="h-6 w-6 p-0"
-                onClick={() => {
-                  navigator.clipboard.writeText(result.rendered_file_id)
-                  toast({ title: "Copied!", description: "File ID copied to clipboard" })
-                }}
-              >
-                <Copy className="h-3 w-3" />
-              </Button>
-            </div>
-          </div>
-        ),
-      })
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to export project",
-        variant: "destructive",
-      })
+      const res = await fetch(`${API_BASE}/remove-bg/${selectedLayer.file_id}`)
+      if (!res.ok) throw new Error("Background removal failed")
+      const data = await res.json()
+      const newUrl = `${API_BASE}/asset/${data.new_file_id}`
+      const layers = project!.layers.map(l =>
+        l.layer_id === selectedLayerId ? { ...l, file_id: data.new_file_id, imageUrl: newUrl } : l
+      )
+      updateLayers(layers)
+      toast({ title: "✅ Background removed!" })
+    } catch (e: any) {
+      toast({ title: "Failed", description: e.message, variant: "destructive" })
     } finally {
       setLoading(false)
     }
   }
 
-  const handleDeleteLayer = (layerId: string) => {
-    handleUpdateLayer(layerId, { opacity: 0 })
-    setSelectedLayer(null)
+  const deleteLayer = () => {
+    if (!selectedLayer || !project) return
+    updateLayers(project.layers.filter(l => l.layer_id !== selectedLayerId))
+    setSelectedLayerId(null)
   }
 
-  const handleUndo = async () => {
+  const duplicateLayer = () => {
+    if (!selectedLayer || !project) return
+    const clone: CanvasLayer = { ...selectedLayer, layer_id: `layer_${Date.now()}`, x: selectedLayer.x + 20, y: selectedLayer.y + 20 }
+    updateLayers([...project.layers, clone])
+    setSelectedLayerId(clone.layer_id)
+  }
+
+  const updateSelectedLayer = (updates: Partial<CanvasLayer>) => {
+    if (!selectedLayerId || !project) return
+    const layers = project.layers.map(l => l.layer_id === selectedLayerId ? { ...l, ...updates } : l)
+    setProject(p => p ? { ...p, layers } : null)
+  }
+
+  const saveProject = async () => {
     if (!project) return
+    setLoading(true)
     try {
-      const result = await apiClient.undo(project._id)
-      const updated = await apiClient.getProject(project._id)
-      setProject(updated)
-      toast({ title: "Undo successful" })
-    } catch (error) {
-      toast({ title: "Nothing to undo", variant: "destructive" })
+      // 1. First update the project dimensions
+      await fetch(`${API_BASE}/editor/projects/${project.project_id}`, {
+        method: "PUT",
+        headers: { "Content-Type" : "application/json" },
+        body: JSON.stringify({ width: project.width, height: project.height, background_color: project.background_color })
+      }).catch(e => console.warn("Project details update skipped:", e))
+      
+      // 2. Sync all layers safely
+      const layerRes = await fetch(`${API_BASE}/editor/${project.project_id}/set-layers`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ layers: project.layers }),
+      })
+      if (!layerRes.ok) throw new Error("Layer sync failed")
+      
+      toast({ title: "✅ Project saved!" })
+    } catch (e: any) {
+      toast({ title: "Save failed", description: e.message, variant: "destructive" })
+    } finally {
+      setLoading(false)
     }
   }
 
-  const handleRedo = async () => {
+  const exportProject = async () => {
     if (!project) return
+    setLoading(true)
     try {
-      const result = await apiClient.redo(project._id)
-      const updated = await apiClient.getProject(project._id)
-      setProject(updated)
-      toast({ title: "Redo successful" })
-    } catch (error) {
-      toast({ title: "Nothing to redo", variant: "destructive" })
+      // FORCE SYNC DIMENSIONS & LAYERS PRIOR TO EXPORT
+      await fetch(`${API_BASE}/editor/projects/${project.project_id}`, {
+        method: "PUT",
+        headers: { "Content-Type" : "application/json" },
+        body: JSON.stringify({ width: project.width, height: project.height, background_color: project.background_color })
+      })
+      await fetch(`${API_BASE}/editor/${project.project_id}/set-layers`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ layers: project.layers }),
+      })
+
+      const res = await fetch(`${API_BASE}/editor/${project.project_id}/render`)
+      if (!res.ok) throw new Error("Render pipeline failed")
+      
+      // We directly read the blob from the StreamingResponse the backend provides!
+      const blob = await res.blob()
+      const url = URL.createObjectURL(blob)
+      const a = document.createElement("a"); a.href = url
+      a.download = `${project.name || "creative"}.png`; a.click()
+      URL.revokeObjectURL(url)
+      
+      toast({ title: "✅ Exported successfully!" })
+    } catch (e: any) {
+      toast({ title: "Export failed", description: e.message, variant: "destructive" })
+    } finally {
+      setLoading(false)
     }
   }
 
-  const updateProjectProgress = () => {
-    if (!project) return
-    const savedProjects = JSON.parse(localStorage.getItem("retailor_projects") || "[]")
-    const projectIndex = savedProjects.findIndex((p: any) => p.id === project._id)
-    if (projectIndex !== -1) {
-      savedProjects[projectIndex].assetsCount = project.layers.length
-      savedProjects[projectIndex].progress = Math.min(100, project.layers.length * 10)
-      localStorage.setItem("retailor_projects", JSON.stringify(savedProjects))
-    }
-  }
-
-  useEffect(() => {
-    updateProjectProgress()
-  }, [project?.layers])
-
-  useEffect(() => {
-    if (selectedLayer?.type === "text") {
-      setEditingText(selectedLayer.text || "")
-    }
-  }, [selectedLayer])
+  const canvasW = (project?.width ?? canvasSize.width) * zoom
+  const canvasH = (project?.height ?? canvasSize.height) * zoom
 
   return (
-    <>
+    <div className="flex h-full flex-col bg-background">
+      {/* Toolbar */}
+      <div className="flex items-center gap-2 border-b border-border bg-card px-4 py-2 flex-wrap">
+        <span className="font-semibold text-sm mr-2 truncate max-w-[140px]">{project?.name ?? "Canvas Editor"}</span>
+        
+        {/* Dynamic Canvas Resizer */}
+        <Select
+          value={`${project?.width || canvasSize.width}x${project?.height || canvasSize.height}`}
+          onValueChange={handleResizeCanvas}
+          disabled={!project}
+        >
+          <SelectTrigger className="w-[180px] h-8 bg-muted/50 border-0 text-xs font-mono"><SelectValue /></SelectTrigger>
+          <SelectContent>
+            <SelectItem value="1080x1080">Insta Square (1080×</SelectItem>
+            <SelectItem value="1080x1920">Insta Story (1080×1920)</SelectItem>
+            <SelectItem value="1200x628">Facebook Ad (1200×628)</SelectItem>
+            <SelectItem value="1280x720">YouTube Thumbnail (1280×720)</SelectItem>
+            <SelectItem value="800x1000">Product Card (800×1000)</SelectItem>
+            <SelectItem value="1920x1080">Full HD Banner (1920×1080)</SelectItem>
+          </SelectContent>
+        </Select>
+
+        <div className="w-px h-6 bg-border mx-1" />
+        
+        <Button size="sm" variant="outline" onClick={() => fileInputRef.current?.click()} className="gap-1">
+          <ImageIcon className="h-4 w-4" /> Image
+        </Button>
+        <Button size="sm" variant="outline" onClick={addTextLayer} className="gap-1">
+          <Type className="h-4 w-4" /> Text
+        </Button>
+        
+        <div className="w-px h-6 bg-border mx-1" />
+        <Button size="icon" variant="ghost" onClick={undo} disabled={history.length === 0} title="Undo">
+          <Undo2 className="h-4 w-4" />
+        </Button>
+        <Button size="icon" variant="ghost" onClick={redo} disabled={future.length === 0} title="Redo">
+          <Redo2 className="h-4 w-4" />
+        </Button>
+        <div className="w-px h-6 bg-border mx-1" />
+        <Button size="icon" variant="ghost" onClick={() => setZoom(z => Math.min(2, z + 0.1))} title="Zoom in">
+          <ZoomIn className="h-4 w-4" />
+        </Button>
+        <Button size="icon" variant="ghost" onClick={() => setZoom(z => Math.max(0.2, z - 0.1))} title="Zoom out">
+          <ZoomOut className="h-4 w-4" />
+        </Button>
+        <span className="text-xs text-muted-foreground w-12 text-center">{Math.round(zoom * 100)}%</span>
+        <Button size="icon" variant="ghost" onClick={() => setShowGrid(g => !g)} title="Toggle grid">
+          <Grid3x3 className="h-4 w-4" />
+        </Button>
+        <div className="flex-1" />
+        <Button size="sm" variant="outline" onClick={saveProject} disabled={loading || !project}>Save</Button>
+        <Button size="sm" onClick={exportProject} disabled={loading || !project} className="gap-1 shadow bg-primary hover:bg-primary/90 text-primary-foreground">
+          <Download className="h-4 w-4" /> Export
+        </Button>
+      </div>
+
+      <input ref={fileInputRef} type="file" accept="image/*" className="hidden" onChange={handleImageUpload} />
+
+      <div className="flex flex-1 overflow-hidden">
+        {/* Canvas area */}
+        <div
+          className="flex-1 overflow-auto bg-[#1a1a2e] flex items-center justify-center p-8"
+          onClick={() => { setSelectedLayerId(null); if (editingLayerId) commitTextEdit() }}
+        >
+          {!project ? (
+            <div className="text-muted-foreground text-center">
+              <p className="text-lg">Create or open a project to start</p>
+            </div>
+          ) : (
+            <div
+              ref={canvasRef}
+              className="relative shadow-2xl bg-white transition-all overflow-hidden"
+              style={{
+                width: canvasW, height: canvasH,
+                background: project.background_color,
+                backgroundImage: showGrid
+                  ? `linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px)`
+                  : undefined,
+                backgroundSize: showGrid ? `${40 * zoom}px ${40 * zoom}px` : undefined,
+              }}
+            >
+              {project.layers.map((layer) => {
+                const isSelected = layer.layer_id === selectedLayerId
+                const isEditing = layer.layer_id === editingLayerId
+                const lx = layer.x * zoom, ly = layer.y * zoom
+                const lw = (layer.width ?? 200) * zoom
+                const lh = (layer.height ?? 60) * zoom
+                const fs = (layer.font_size ?? 32) * zoom
+
+                return (
+                  <div key={layer.layer_id}>
+                    {/* Layer element */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        left: lx, top: ly,
+                        width: lw, height: lh,
+                        opacity: layer.opacity ?? 1,
+                        cursor: dragState.current?.layerId === layer.layer_id ? "grabbing" : "grab",
+                        outline: isSelected ? "2px solid #7c3aed" : "none",
+                        outlineOffset: "1px",
+                        boxSizing: "border-box",
+                        userSelect: "none",
+                        transform: `rotate(${layer.rotation || 0}deg)`
+                      }}
+                      onMouseDown={(e) => onLayerMouseDown(e, layer.layer_id)}
+                      onDoubleClick={(e) => handleDoubleClick(e, layer)}
+                    >
+                      {layer.type === "image" && layer.imageUrl ? (
+                        <img
+                          src={layer.imageUrl}
+                          alt=""
+                          draggable={false}
+                          style={{ width: "100%", height: "100%", objectFit: "contain", display: "block" }}
+                        />
+                      ) : layer.type === "image" ? (
+                        <div className="w-full h-full flex items-center justify-center bg-white/10 border border-dashed border-white/30 rounded">
+                          <ImageIcon className="text-white/40" style={{ width: lw / 4, height: lh / 4 }} />
+                        </div>
+                      ) : isEditing ? (
+                        <textarea
+                          autoFocus
+                          value={inlineText}
+                          onChange={e => setInlineText(e.target.value)}
+                          onBlur={commitTextEdit}
+                          onKeyDown={e => { if (e.key === "Escape") commitTextEdit() }}
+                          style={{
+                            position: "absolute", inset: 0,
+                            background: "transparent",
+                            border: "none", outline: "none",
+                            resize: "none",
+                            color: layer.color ?? "#000",
+                            fontSize: fs,
+                            fontFamily: "Arial, sans-serif",
+                            fontWeight: "bold",
+                            lineHeight: 1.2,
+                            padding: 0,
+                            width: "100%", height: "100%",
+                          }}
+                          onClick={e => e.stopPropagation()}
+                        />
+                      ) : (
+                        <span
+                          style={{
+                            color: layer.color ?? "#000",
+                            fontSize: fs,
+                            fontFamily: "Arial, sans-serif",
+                            fontWeight: "bold",
+                            lineHeight: 1.2,
+                            whiteSpace: "pre-wrap",
+                            display: "block",
+                          }}
+                        >
+                          {layer.text ?? ""}
+                        </span>
+                      )}
+                    </div>
+
+                    {/* Resize handles */}
+                    {isSelected && !isEditing && HANDLES.map(handle => {
+                      const pos = getHandlePos(layer, handle, zoom)
+                      return (
+                         <div
+                          key={handle}
+                          style={{
+                            position: "absolute",
+                            left: pos.left, top: pos.top,
+                            width: 10, height: 10,
+                            background: "#7c3aed",
+                            border: "2px solid white",
+                            borderRadius: 2,
+                            cursor: handleCursor[handle],
+                            zIndex: 10,
+                          }}
+                          onMouseDown={(e) => onHandleMouseDown(e, layer.layer_id, handle)}
+                        />
+                      )
+                    })}
+                  </div>
+                )
+              })}
+            </div>
+          )}
+        </div>
+
+        {/* Right Panel with Tabs for AI and Properties */}
+        {project && (
+          <div className="w-80 shrink-0 overflow-hidden flex flex-col border-l border-border bg-card">
+            <Tabs defaultValue="properties" className="flex flex-col h-full">
+              <TabsList className="grid grid-cols-2 rounded-none p-0 h-11 bg-card border-b border-border">
+                <TabsTrigger value="properties" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-primary data-[state=active]:shadow-none"><Settings2 className="w-3.5 h-3.5 mr-2" /> Properties</TabsTrigger>
+                <TabsTrigger value="ai" className="rounded-none data-[state=active]:border-b-2 data-[state=active]:border-indigo-500 data-[state=active]:text-indigo-500 data-[state=active]:shadow-none"><Sparkles className="w-3.5 h-3.5 mr-2" /> AI Copilot</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="properties" className="flex-1 overflow-y-auto p-4 space-y-4 m-0 data-[state=inactive]:hidden">
+                {selectedLayer ? (
+                  <>
+                    <div className="flex items-center justify-between">
+                      <h3 className="font-semibold text-sm capitalize">{selectedLayer.type} Layer</h3>
+                      <div className="flex gap-1">
+                        <Button size="icon" variant="ghost" className="h-7 w-7" onClick={duplicateLayer} title="Duplicate">
+                          <Copy className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button size="icon" variant="ghost" className="h-7 w-7 text-destructive" onClick={deleteLayer} title="Delete">
+                          <Trash2 className="h-3.5 w-3.5" />
+                        </Button>
+                      </div>
+                    </div>
+
+                    <div className="grid grid-cols-2 gap-2">
+                      {["x", "y", "width", "height"].map(prop => (
+                        <div key={prop} className="space-y-1">
+                          <Label className="text-[11px] uppercase text-muted-foreground">{prop}</Label>
+                          <Input
+                            type="number"
+                            value={Math.round((selectedLayer as any)[prop] ?? 0)}
+                            onChange={e => updateSelectedLayer({ [prop]: parseInt(e.target.value) || 0 })}
+                            className="h-8 text-xs font-mono"
+                          />
+                        </div>
+                      ))}
+                    </div>
+
+                    {selectedLayer.type === "text" && (
+                      <>
+                        <div className="space-y-1 mt-4 border-t border-border pt-4">
+                          <Label className="text-xs">Text Content</Label>
+                          <Textarea
+                            value={selectedLayer.text ?? ""}
+                            onChange={e => updateSelectedLayer({ text: e.target.value })}
+                            rows={3}
+                            className="text-xs resize-none"
+                          />
+                        </div>
+                        <div className="grid grid-cols-2 gap-2">
+                          <div className="space-y-1">
+                            <Label className="text-xs">Font Size</Label>
+                            <Input
+                              type="number"
+                              value={selectedLayer.font_size ?? 32}
+                              onChange={e => updateSelectedLayer({ font_size: parseInt(e.target.value) || 32 })}
+                              className="h-8 text-xs"
+                            />
+                          </div>
+                          <div className="space-y-1">
+                            <Label className="text-xs">Text Color</Label>
+                            <div className="flex gap-1">
+                              <input type="color" value={selectedLayer.color ?? "#000000"} onChange={e => updateSelectedLayer({ color: e.target.value })} className="h-8 w-9 rounded-md border cursor-pointer" />
+                              <Input value={selectedLayer.color ?? "#000000"} onChange={e => updateSelectedLayer({ color: e.target.value })} className="h-8 text-xs font-mono flex-1" />
+                            </div>
+                          </div>
+                        </div>
+                      </>
+                    )}
+
+                    {selectedLayer.type === "image" && (
+                      <div className="pt-4 border-t border-border mt-4">
+                        <Button size="sm" variant="outline" className="w-full flex items-center justify-center gap-2" onClick={removeBackground} disabled={loading}>
+                          <Wand2 className="w-3.5 h-3.5" /> {loading ? "Processing…" : "Auto Remove Background"}
+                        </Button>
+                      </div>
+                    )}
+
+                    <div className="space-y-2 pt-4 border-t border-border mt-4">
+                      <Label className="text-xs flex justify-between">
+                        <span>Opacity</span>
+                        <span>{Math.round((selectedLayer.opacity ?? 1) * 100)}%</span>
+                      </Label>
+                      <Slider
+                        min={0} max={1} step={0.01}
+                        value={[selectedLayer.opacity ?? 1]}
+                        onValueChange={([v]) => updateSelectedLayer({ opacity: v })}
+                      />
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <h3 className="font-semibold text-sm">Canvas Setup</h3>
+                    <div className="space-y-1">
+                      <Label className="text-xs">Background Hex</Label>
+                      <div className="flex gap-1">
+                        <input
+                          type="color"
+                          value={project.background_color}
+                          onChange={e => setProject(p => p ? { ...p, background_color: e.target.value } : null)}
+                          className="h-8 w-9 rounded border cursor-pointer"
+                        />
+                        <Input
+                          value={project.background_color}
+                          onChange={e => setProject(p => p ? { ...p, background_color: e.target.value } : null)}
+                          className="h-8 text-xs font-mono"
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-1 pt-4 border-t border-border mt-4">
+                      <div className="flex items-center justify-between mb-2">
+                        <h4 className="text-xs font-semibold text-muted-foreground">LAYERS DICTIONARY ({project.layers.length})</h4>
+                      </div>
+                      {project.layers.length === 0 ? (
+                        <p className="text-xs text-muted-foreground p-4 text-center border border-dashed rounded bg-muted/20">No active layers</p>
+                      ) : (
+                        <div className="space-y-1 max-h-[400px] overflow-y-auto pr-1">
+                          {[...project.layers].reverse().map(layer => (
+                            <button
+                              key={layer.layer_id}
+                              onClick={() => setSelectedLayerId(layer.layer_id)}
+                              className={`w-full text-left flex items-center gap-2 px-2.5 py-2 border rounded text-xs transition-colors ${
+                                layer.layer_id === selectedLayerId ? "bg-primary/10 border-primary text-primary" : "border-transparent hover:bg-muted"
+                              }`}
+                            >
+                              {layer.type === "text" ? <Type className="h-3.5 w-3.5 shrink-0" /> : <ImageIcon className="h-3.5 w-3.5 shrink-0" />}
+                              <span className="truncate">{layer.text?.slice(0, 22) ?? `Image (${layer.width}×${layer.height})`}</span>
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  </>
+                )}
+              </TabsContent>
+
+              <TabsContent value="ai" className="flex-1 overflow-y-auto p-4 space-y-4 m-0 data-[state=inactive]:hidden bg-gradient-to-br from-indigo-50/10 to-transparent">
+                <div className="space-y-1.5">
+                  <h3 className="font-semibold text-sm text-indigo-500">Magic Ad Writer</h3>
+                  <p className="text-xs text-muted-foreground leading-snug">Generate headlines and catchphrases tailored to your brand directly onto the canvas.</p>
+                </div>
+                
+                <div className="space-y-3">
+                  <div className="space-y-1">
+                    <Label className="text-xs text-foreground/80">Product Name</Label>
+                    <Input placeholder="e.g. Vita Glow Serum" value={aiProduct} onChange={e => setAiProduct(e.target.value)} className="h-8 text-xs" />
+                  </div>
+                  <div className="space-y-1">
+                    <Label className="text-xs text-foreground/80">Key Benefit</Label>
+                    <Input placeholder="e.g. 24h hydration" value={aiDesc} onChange={e => setAiDesc(e.target.value)} className="h-8 text-xs" />
+                  </div>
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="space-y-1">
+                      <Label className="text-[10px] uppercase">Tone</Label>
+                      <Select value={aiTone} onValueChange={setAiTone}>
+                        <SelectTrigger className="h-8 text-xs"><SelectValue/></SelectTrigger>
+                        <SelectContent position="popper">
+                          <SelectItem value="professional">Pro</SelectItem>
+                          <SelectItem value="playful">Playful</SelectItem>
+                          <SelectItem value="urgent">Urgent</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-1">
+                      <Label className="text-[10px] uppercase">Format</Label>
+                      <Select value={aiPlatform} onValueChange={setAiPlatform}>
+                        <SelectTrigger className="h-8 text-xs"><SelectValue/></SelectTrigger>
+                        <SelectContent position="popper">
+                          <SelectItem value="instagram">Instagram</SelectItem>
+                          <SelectItem value="display">Display Ad</SelectItem>
+                          <SelectItem value="email">Email</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  
+                  <Button onClick={generateAICopy} disabled={aiLoading || !aiProduct} className="w-full h-8 text-xs gap-1 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white border-0 shadow-md">
+                    <Sparkles className="w-3.5 h-3.5" />
+                    {aiLoading ? "Generating..." : "Generate AI Ideas"}
+                  </Button>
+                </div>
+
+                {aiResults && (
+                  <div className="pt-4 border-t border-indigo-100 flex flex-col gap-3">
+                    <div className="space-y-2">
+                      <Label className="text-xs font-semibold text-foreground/70">Top Headlines</Label>
+                      {aiResults.headlines?.map((hl: string, i: number) => (
+                        <div key={i} className="group relative border border-border rounded-lg p-2.5 bg-background shadow-sm hover:border-indigo-300 transition-colors">
+                          <p className="text-xs font-bold leading-tight pr-6">{hl}</p>
+                          <button onClick={() => injectAiTextToCanvas(hl, 64, "#111111")} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 bg-muted rounded hover:bg-indigo-100 hover:text-indigo-600 transition-colors" title="Add to Canvas">
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+
+                    <div className="space-y-2 mt-2">
+                      <Label className="text-xs font-semibold text-foreground/70">Supporting Tags</Label>
+                      {aiResults.taglines?.map((tag: string, i: number) => (
+                        <div key={i} className="group relative border border-border rounded-lg p-2.5 bg-background shadow-sm hover:border-indigo-300 transition-colors">
+                          <p className="text-xs font-medium italic text-muted-foreground leading-tight pr-6">"{tag}"</p>
+                          <button onClick={() => injectAiTextToCanvas(tag, 32, "#555555")} className="absolute right-2 top-1/2 -translate-y-1/2 p-1 bg-muted rounded hover:bg-indigo-100 hover:text-indigo-600 transition-colors" title="Add to Canvas">
+                            <Plus className="w-3.5 h-3.5" />
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
+            </Tabs>
+          </div>
+        )}
+      </div>
+
+      {/* Name Dialog */}
       <Dialog open={showNameDialog} onOpenChange={setShowNameDialog}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Create New Project</DialogTitle>
-            <DialogDescription>Give your project a name to get started</DialogDescription>
+            <DialogTitle>New Canvas Project</DialogTitle>
+            <DialogDescription>Give your project a name and choose its dimensions.</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label htmlFor="project-name">Project Name</Label>
+          <div className="space-y-4 py-2">
+            <div className="space-y-1.5">
+              <Label>Project Name</Label>
               <Input
-                id="project-name"
-                placeholder="e.g., Summer Campaign 2024"
                 value={projectName}
-                onChange={(e) => setProjectName(e.target.value)}
-                onKeyDown={(e) => {
-                  if (e.key === "Enter" && projectName.trim()) {
-                    setShowNameDialog(false)
-                    initializeProject(projectName.trim())
-                  }
-                }}
+                onChange={e => setProjectName(e.target.value)}
+                placeholder="e.g. Summer Campaign 2025"
+                onKeyDown={e => e.key === "Enter" && projectName.trim() && initializeProject(projectName)}
               />
+            </div>
+            <div className="space-y-1.5">
+              <Label>Initial Canvas Size</Label>
+              <Select
+                value={`${canvasSize.width}x${canvasSize.height}`}
+                onValueChange={v => {
+                  const [w, h] = v.split("x").map(Number)
+                  setCanvasSize({ width: w, height: h })
+                }}
+              >
+                <SelectTrigger><SelectValue /></SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="1080x1080">Instagram Post (1080×1080)</SelectItem>
+                  <SelectItem value="1080x1920">Instagram Story (1080×1920)</SelectItem>
+                  <SelectItem value="1200x628">Facebook Ad (1200×628)</SelectItem>
+                  <SelectItem value="1280x720">YouTube Thumbnail (1280×720)</SelectItem>
+                  <SelectItem value="800x1000">Product Card (800×1000)</SelectItem>
+                  <SelectItem value="1920x1080">Full HD Banner (1920×1080)</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
           <DialogFooter>
             <Button
-              onClick={() => {
-                if (projectName.trim()) {
-                  setShowNameDialog(false)
-                  initializeProject(projectName.trim())
-                }
-              }}
-              disabled={!projectName.trim()}
-              className="gradient-primary"
+              onClick={() => initializeProject(projectName || "Untitled Project")}
+              disabled={loading}
+              className="gradient-primary shadow"
             >
-              Create Project
+              {loading ? "Creating…" : "Create Canvas →"}
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <div className="flex h-full flex-col lg:flex-row overflow-hidden">
-        {/* Tools Sidebar */}
-        <div className="w-full lg:w-64 border-b lg:border-b-0 lg:border-r border-border bg-card p-4 space-y-4 overflow-y-auto">
-          {project && (
-            <Card className="p-4 space-y-3 bg-gradient-to-br from-primary/10 to-accent/10 border-primary/20">
-              <div className="flex items-start justify-between gap-2">
-                <div className="flex-1 min-w-0">
-                  <h3 className="font-semibold text-sm truncate">{projectName}</h3>
-                  <p className="text-xs text-muted-foreground mt-1">Project ID</p>
-                </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-7 w-7 p-0 shrink-0"
-                  onClick={() => setShowNameDialog(true)}
-                >
-                  <Edit3 className="h-3 w-3" />
-                </Button>
-              </div>
-              <div className="flex items-center gap-2 p-2 bg-background/50 rounded text-xs font-mono break-all">
-                <span className="flex-1 truncate">{project._id}</span>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-6 w-6 p-0 shrink-0"
-                  onClick={() => {
-                    navigator.clipboard.writeText(project._id)
-                    toast({ title: "Copied!", description: "Project ID copied" })
-                  }}
-                >
-                  <Copy className="h-3 w-3" />
-                </Button>
-              </div>
-              <div className="flex gap-2 text-xs">
-                <Badge variant="secondary">{project.layers.length} layers</Badge>
-                <Badge variant="outline">
-                  {project.width}×{project.height}
-                </Badge>
-              </div>
-            </Card>
-          )}
-
-          <div className="space-y-2">
-            <h3 className="text-sm font-semibold">Add Elements</h3>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              className="hidden"
-              onChange={(e) => {
-                if (e.target.files?.[0]) {
-                  handleAddImage(e.target.files[0])
-                }
-              }}
-            />
-            <Button
-              className="w-full gap-2 gradient-primary"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={!project || loading}
-            >
-              <ImageIcon className="h-4 w-4" />
-              Add Image
-            </Button>
-            <Button
-              className="w-full gap-2 gradient-accent bg-transparent"
-              variant="outline"
-              onClick={handleAddText}
-              disabled={!project || loading}
-            >
-              <Type className="h-4 w-4" />
-              Add Text
-            </Button>
-          </div>
-
-          <Separator />
-
-          {selectedLayer && (
-            <>
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <h3 className="font-medium">Layer Properties</h3>
-                  <Button size="sm" variant="ghost" onClick={() => handleDeleteLayer(selectedLayer.layer_id)}>
-                    <Trash2 className="h-4 w-4 text-destructive" />
-                  </Button>
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Position X</Label>
-                  <Input
-                    type="number"
-                    value={selectedLayer.x}
-                    onChange={(e) =>
-                      handleUpdateLayer(selectedLayer.layer_id, {
-                        x: Number.parseInt(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Position Y</Label>
-                  <Input
-                    type="number"
-                    value={selectedLayer.y}
-                    onChange={(e) =>
-                      handleUpdateLayer(selectedLayer.layer_id, {
-                        y: Number.parseInt(e.target.value) || 0,
-                      })
-                    }
-                  />
-                </div>
-
-                {selectedLayer.type === "image" && (
-                  <>
-                    <div className="space-y-2">
-                      <Label>Width</Label>
-                      <Input
-                        type="number"
-                        value={selectedLayer.width}
-                        onChange={(e) =>
-                          handleUpdateLayer(selectedLayer.layer_id, {
-                            width: Number.parseInt(e.target.value) || 0,
-                          })
-                        }
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Height</Label>
-                      <Input
-                        type="number"
-                        value={selectedLayer.height}
-                        onChange={(e) =>
-                          handleUpdateLayer(selectedLayer.layer_id, {
-                            height: Number.parseInt(e.target.value) || 0,
-                          })
-                        }
-                      />
-                    </div>
-                  </>
-                )}
-
-                {selectedLayer.type === "text" && (
-                  <>
-                    <div className="space-y-2">
-                      <Label>Text</Label>
-                      <Textarea
-                        value={editingText}
-                        onChange={(e) => setEditingText(e.target.value)}
-                        onBlur={() => {
-                          if (editingText !== selectedLayer.text) {
-                            handleUpdateLayer(selectedLayer.layer_id, { text: editingText })
-                          }
-                        }}
-                        placeholder="Enter text..."
-                        rows={3}
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Font Size</Label>
-                      <Input
-                        type="number"
-                        value={selectedLayer.font_size}
-                        onChange={(e) =>
-                          handleUpdateLayer(selectedLayer.layer_id, {
-                            font_size: Number.parseInt(e.target.value) || 12,
-                          })
-                        }
-                      />
-                    </div>
-
-                    <div className="space-y-2">
-                      <Label>Color</Label>
-                      <div className="flex gap-2">
-                        <Input
-                          type="color"
-                          value={selectedLayer.color}
-                          className="w-16 h-10 p-1"
-                          onChange={(e) =>
-                            handleUpdateLayer(selectedLayer.layer_id, {
-                              color: e.target.value,
-                            })
-                          }
-                        />
-                        <Input
-                          type="text"
-                          value={selectedLayer.color}
-                          className="flex-1"
-                          onChange={(e) =>
-                            handleUpdateLayer(selectedLayer.layer_id, {
-                              color: e.target.value,
-                            })
-                          }
-                        />
-                      </div>
-                    </div>
-                  </>
-                )}
-
-                <div className="space-y-2">
-                  <Label>Rotation ({selectedLayer.rotation}°)</Label>
-                  <Slider
-                    value={[selectedLayer.rotation]}
-                    onValueChange={([value]) =>
-                      handleUpdateLayer(selectedLayer.layer_id, {
-                        rotation: value,
-                      })
-                    }
-                    min={0}
-                    max={360}
-                    step={1}
-                  />
-                </div>
-
-                {selectedLayer.opacity !== undefined && (
-                  <div className="space-y-2">
-                    <Label>Opacity ({Math.round(selectedLayer.opacity * 100)}%)</Label>
-                    <Slider
-                      value={[selectedLayer.opacity * 100]}
-                      onValueChange={([value]) =>
-                        handleUpdateLayer(selectedLayer.layer_id, {
-                          opacity: value / 100,
-                        })
-                      }
-                      min={0}
-                      max={100}
-                      step={1}
-                    />
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-
-          <Separator />
-
-          <div className="space-y-2">
-            <h3 className="text-sm font-semibold">Actions</h3>
-            <Button className="w-full gap-2 bg-transparent" variant="outline" onClick={handleUndo} disabled={!project}>
-              <Undo2 className="h-4 w-4" />
-              Undo
-            </Button>
-            <Button className="w-full gap-2 bg-transparent" variant="outline" onClick={handleRedo} disabled={!project}>
-              <Redo2 className="h-4 w-4" />
-              Redo
-            </Button>
-            <Button className="w-full gap-2 gradient-primary" onClick={handleExport} disabled={!project || loading}>
-              <Download className="h-4 w-4" />
-              Export
-            </Button>
-          </div>
-        </div>
-
-        {/* Canvas Area */}
-        <div className="flex-1 flex flex-col min-h-0">
-          <div className="border-b border-border bg-card px-3 sm:px-4 py-2 sm:py-3">
-            <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-1 sm:gap-2 flex-wrap">
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleUndo}
-                  disabled={loading}
-                  className="h-8 w-8 p-0 sm:h-9 sm:w-9"
-                >
-                  <Undo2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                </Button>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={handleRedo}
-                  disabled={loading}
-                  className="h-8 w-8 p-0 sm:h-9 sm:w-9"
-                >
-                  <Redo2 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                </Button>
-                <Separator orientation="vertical" className="mx-1 sm:mx-2 h-6" />
-                <Select
-                  value={`${canvasSize.width}x${canvasSize.height}`}
-                  onValueChange={(value) => {
-                    const [width, height] = value.split("x").map(Number)
-                    setCanvasSize({ width, height })
-                  }}
-                >
-                  <Trigger className="w-32 sm:w-40 h-8 sm:h-9 text-xs sm:text-sm">
-                    {`${canvasSize.width}x${canvasSize.height}`}
-                  </Trigger>
-                  <SelectContent>
-                    <div className="p-2">
-                      <SelectGroup>
-                        <SelectItem value="1080x1080">1080x1080</SelectItem>
-                        <SelectItem value="1080x1350">1080x1350</SelectItem>
-                        <SelectItem value="1920x1080">1920x1080</SelectItem>
-                        <SelectItem value="2000x2000">2000x2000</SelectItem>
-                      </SelectGroup>
-                    </div>
-                  </SelectContent>
-                </Select>
-                <Separator orientation="vertical" className="hidden sm:block mx-2 h-6" />
-                <div className="flex items-center gap-1">
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setZoom(Math.max(0.1, zoom - 0.1))}
-                    className="h-8 w-8 p-0 sm:h-9 sm:w-9"
-                  >
-                    <ZoomOut className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </Button>
-                  <span className="text-xs sm:text-sm text-muted-foreground w-12 sm:w-16 text-center">
-                    {Math.round(zoom * 100)}%
-                  </span>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => setZoom(Math.min(2, zoom + 0.1))}
-                    className="h-8 w-8 p-0 sm:h-9 sm:w-9"
-                  >
-                    <ZoomIn className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  </Button>
-                </div>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowGrid(!showGrid)}
-                  className="h-8 w-8 p-0 sm:h-9 sm:w-9"
-                >
-                  <Grid3x3 className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                </Button>
-              </div>
-              <div className="flex items-center gap-2">
-                <Dialog>
-                  <DialogTrigger asChild>
-                    <Button variant="outline" size="sm" className="gap-2 bg-transparent h-8 sm:h-9 text-xs sm:text-sm">
-                      <Eye className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                      <span className="hidden sm:inline">Preview</span>
-                    </Button>
-                  </DialogTrigger>
-                  <DialogContent className="max-w-4xl">
-                    <DialogHeader>
-                      <DialogTitle>Canvas Preview</DialogTitle>
-                      <DialogDescription>Full resolution preview of your creative</DialogDescription>
-                    </DialogHeader>
-                    <div className="flex items-center justify-center bg-muted/30 p-8 rounded-lg">
-                      <div
-                        className="relative bg-white shadow-2xl"
-                        style={{
-                          width: `${Math.min(canvasSize.width, 600)}px`,
-                          height: `${Math.min(canvasSize.height, 600)}px`,
-                        }}
-                      >
-                        {project?.layers.map((layer) => (
-                          <div
-                            key={layer.layer_id}
-                            className="absolute"
-                            style={{
-                              left: `${(layer.x / canvasSize.width) * 100}%`,
-                              top: `${(layer.y / canvasSize.height) * 100}%`,
-                              width: layer.width ? `${(layer.width / canvasSize.width) * 100}%` : "auto",
-                              height: layer.height ? `${(layer.height / canvasSize.height) * 100}%` : "auto",
-                              transform: `rotate(${layer.rotation}deg)`,
-                              opacity: layer.opacity || 1,
-                            }}
-                          >
-                            {layer.type === "image" && layer.file_id && (
-                              <img
-                                src={apiClient.getAssetUrl(layer.file_id) || "/placeholder.svg"}
-                                alt="Layer"
-                                className="h-full w-full object-cover"
-                                crossOrigin="anonymous"
-                                onError={(e) => {
-                                  console.error("[v0] Failed to load image:", layer.file_id)
-                                  e.currentTarget.src = "/abstract-colorful-swirls.png"
-                                }}
-                              />
-                            )}
-                            {layer.type === "text" && (
-                              <div
-                                style={{
-                                  fontSize: `${(layer.font_size || 48) * (Math.min(canvasSize.width, 600) / canvasSize.width)}px`,
-                                  color: layer.color,
-                                  fontWeight: "bold",
-                                  whiteSpace: "nowrap",
-                                }}
-                              >
-                                {layer.text}
-                              </div>
-                            )}
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  </DialogContent>
-                </Dialog>
-                <Button
-                  size="sm"
-                  className="gap-2 gradient-primary h-8 sm:h-9 text-xs sm:text-sm"
-                  onClick={handleExport}
-                  disabled={loading}
-                >
-                  <Download className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                  <span className="hidden sm:inline">{loading ? "Rendering..." : "Export"}</span>
-                  <span className="sm:hidden">Export</span>
-                </Button>
-              </div>
-            </div>
-          </div>
-
-          {/* Actual Canvas Rendering */}
-          <div className="flex-1 overflow-auto p-4 sm:p-6 md:p-8 bg-muted/30">
-            <div className="flex items-center justify-center min-h-full">
-              <div
-                className="relative shadow-2xl"
-                style={{
-                  width: `${canvasSize.width * zoom}px`,
-                  height: `${canvasSize.height * zoom}px`,
-                  backgroundColor: project?.background_color || "#FFFFFF",
-                  backgroundImage: showGrid
-                    ? "repeating-linear-gradient(0deg, #e5e7eb 0px, #e5e7eb 1px, transparent 1px, transparent 20px), repeating-linear-gradient(90deg, #e5e7eb 0px, #e5e7eb 1px, transparent 1px, transparent 20px)"
-                    : "none",
-                  backgroundSize: showGrid ? `${20 * zoom}px ${20 * zoom}px` : "auto",
-                }}
-              >
-                {project?.layers.map((layer) => (
-                  <div
-                    key={layer.layer_id}
-                    className={`absolute cursor-move ${
-                      selectedLayer?.layer_id === layer.layer_id ? "ring-2 ring-primary" : ""
-                    }`}
-                    style={{
-                      left: `${layer.x * zoom}px`,
-                      top: `${layer.y * zoom}px`,
-                      width: layer.width ? `${layer.width * zoom}px` : "auto",
-                      height: layer.height ? `${layer.height * zoom}px` : "auto",
-                      transform: `rotate(${layer.rotation}deg)`,
-                      opacity: layer.opacity || 1,
-                    }}
-                    onClick={(e) => {
-                      e.stopPropagation()
-                      setSelectedLayer(layer)
-                    }}
-                  >
-                    {layer.type === "image" && layer.file_id && (
-                      <img
-                        src={apiClient.getAssetUrl(layer.file_id) || "/placeholder.svg"}
-                        alt="Layer"
-                        className="h-full w-full object-cover"
-                        crossOrigin="anonymous"
-                        onError={(e) => {
-                          console.log("[v0] Image load failed, using fallback")
-                          e.currentTarget.src = "/abstract-colorful-swirls.png"
-                        }}
-                      />
-                    )}
-                    {layer.type === "text" && (
-                      <div
-                        style={{
-                          fontSize: `${(layer.font_size || 48) * zoom}px`,
-                          color: layer.color || "#000000",
-                          fontWeight: "bold",
-                          whiteSpace: "nowrap",
-                        }}
-                      >
-                        {layer.text || "Text"}
-                      </div>
-                    )}
-                  </div>
-                ))}
-
-                {!project && (
-                  <div className="absolute inset-0 flex items-center justify-center text-muted-foreground">
-                    <div className="text-center">
-                      <p className="text-lg font-medium">Create a project to start editing</p>
-                      <p className="text-sm mt-2">Click "New Project" above</p>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          {/* Layers Sidebar */}
-          <div className="hidden lg:block lg:w-64 border-l border-border bg-card p-4 space-y-4 overflow-y-auto">
-            <div className="space-y-2">
-              <h3 className="text-sm font-semibold">Layers</h3>
-              {project?.layers.map((layer, index) => (
-                <Card
-                  key={layer.layer_id}
-                  className={`cursor-pointer transition-all hover:border-primary/50 ${
-                    selectedLayer?.layer_id === layer.layer_id ? "border-primary bg-primary/5" : ""
-                  }`}
-                  onClick={() => setSelectedLayer(layer)}
-                >
-                  <div className="p-3">
-                    <div className="flex items-center gap-3">
-                      {layer.type === "image" ? (
-                        <ImageIcon className="h-4 w-4 text-muted-foreground" />
-                      ) : (
-                        <Type className="h-4 w-4 text-muted-foreground" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="truncate text-sm font-medium">
-                          {layer.type === "text" ? layer.text : `Image ${index + 1}`}
-                        </p>
-                        <p className="text-xs text-muted-foreground capitalize">{layer.type} Layer</p>
-                      </div>
-                    </div>
-                  </div>
-                </Card>
-              ))}
-
-              {project?.layers.length === 0 && (
-                <div className="py-8 text-center text-sm text-muted-foreground">No layers yet</div>
-              )}
-            </div>
-          </div>
-
-          {/* Mobile Tools */}
-          <div className="lg:hidden border-t border-border bg-card p-3">
-            <div className="flex items-center justify-around gap-2">
-              <input
-                ref={fileInputRef}
-                type="file"
-                accept="image/*"
-                className="hidden"
-                onChange={(e) => {
-                  if (e.target.files?.[0]) {
-                    handleAddImage(e.target.files[0])
-                  }
-                }}
-              />
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1 gap-2 bg-transparent"
-                onClick={() => fileInputRef.current?.click()}
-                disabled={!project || loading}
-              >
-                <ImageIcon className="h-4 w-4" />
-                Image
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                className="flex-1 gap-2 bg-transparent"
-                onClick={handleAddText}
-                disabled={!project || loading}
-              >
-                <Type className="h-4 w-4" />
-                Text
-              </Button>
-              <Button variant="outline" size="sm" className="flex-1 gap-2 bg-transparent">
-                <ImageIcon className="h-4 w-4" />
-                Layers {project?.layers.length || 0}
-              </Button>
-            </div>
-          </div>
-        </div>
-      </div>
-    </>
+    </div>
   )
 }

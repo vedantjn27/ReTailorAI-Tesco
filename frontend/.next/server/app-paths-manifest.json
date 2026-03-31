@@ -1,0 +1,15 @@
+{
+  "/(dashboard)/ai-suggestions/page": "app/(dashboard)/ai-suggestions/page.js",
+  "/(dashboard)/assets/page": "app/(dashboard)/assets/page.js",
+  "/(dashboard)/collaboration/page": "app/(dashboard)/collaboration/page.js",
+  "/(dashboard)/compliance/page": "app/(dashboard)/compliance/page.js",
+  "/(dashboard)/dashboard/page": "app/(dashboard)/dashboard/page.js",
+  "/(dashboard)/editor/page": "app/(dashboard)/editor/page.js",
+  "/(dashboard)/enhance/page": "app/(dashboard)/enhance/page.js",
+  "/(dashboard)/export/page": "app/(dashboard)/export/page.js",
+  "/(dashboard)/settings/page": "app/(dashboard)/settings/page.js",
+  "/(dashboard)/templates/page": "app/(dashboard)/templates/page.js",
+  "/_global-error/page": "app/_global-error/page.js",
+  "/_not-found/page": "app/_not-found/page.js",
+  "/page": "app/page.js"
+}
