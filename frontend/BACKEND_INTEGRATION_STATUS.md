@@ -8,7 +8,7 @@ All features in the frontend are properly connected to your FastAPI backend endp
 
 ## API Endpoints Connected
 
-### 1. Asset Management (`/assets`)
+### 1. Asset Management (`/assets`) 
 **Status**: ✅ Fully Connected
 
 | Feature | Endpoint | Status |
