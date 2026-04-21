@@ -12,6 +12,7 @@ import {
   Wand2,
   Share2,
   Download,
+  ImagePlus,
 } from "lucide-react"
 
 import {
@@ -59,6 +60,11 @@ const navigation = [
         title: "AI Suggestions",
         url: "/ai-suggestions",
         icon: Sparkles,
+      },
+      {
+        title: "AI Poster Generator",
+        url: "/poster-generator",
+        icon: ImagePlus,
       },
     ],
   },

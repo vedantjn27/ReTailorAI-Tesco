@@ -143,6 +143,7 @@ export default function EditorPage() {
           ...l,
           width: l.width ?? (l.type === "text" ? 400 : 300),
           height: l.height ?? (l.type === "text" ? 80 : 300),
+          imageUrl: l.imageUrl || (l.file_id ? `${API_BASE}/asset/${l.file_id}` : undefined),
         })),
       })
       setCanvasSize({ width: data.width, height: data.height })
@@ -588,7 +589,7 @@ export default function EditorPage() {
               className="relative shadow-2xl bg-white transition-all overflow-hidden"
               style={{
                 width: canvasW, height: canvasH,
-                background: project.background_color,
+                backgroundColor: project.background_color,
                 backgroundImage: showGrid
                   ? `linear-gradient(rgba(255,255,255,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,.08) 1px, transparent 1px)`
                   : undefined,
