@@ -2,7 +2,7 @@
 
 <!-- Animated SVG Banner -->
 <picture>
-  <img src="https://readme-typing-svg.demolab.com?font=Syne&weight=800&size=50&duration=3000&pause=1200&color=6366F1&center=true&vCenter=true&width=1000&height=120&lines=ReTailor+AI+%E2%9C%82%EF%B8%8F;Retail+Media.+Reimagined.;Creatives+in+Seconds." alt="ReTailor AI" />
+  <img src="https://readme-typing-svg.demolab.com?font=Syne&weight=800&size=52&duration=3000&pause=1200&color=6366F1&center=true&vCenter=true&width=1000&height=120&lines=ReTailor+AI+%E2%9C%82%EF%B8%8F;Retail+Media.+Reimagined.;Creatives+in+Seconds." alt="ReTailor AI" />
 </picture>
 
 <br/><br/>
