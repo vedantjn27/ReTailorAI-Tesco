@@ -19,6 +19,10 @@ import math
 import cv2
 import zipfile
 from datetime import datetime
+import PyPDF2
+import docx
+import requests
+from fastapi import Form
 
 # Load environment variables FIRST before anything else
 env_path = os.path.join(os.path.dirname(__file__), ".env")
@@ -32,6 +36,7 @@ else:
 MONGO_URI = os.getenv("MONGODB_URI")
 DB_NAME = os.getenv("DB_NAME", "RetailorAI")
 MISTRAL_API_KEY = os.getenv("MISTRAL_API_KEY")
+HUGGINGFACE_API_KEY = os.getenv("HUGGINGFACE_API_KEY", "")
 
 # Initialize FastAPI
 app = FastAPI(title="ReTailor AI Backend")
@@ -1769,6 +1774,94 @@ def reseed_templates():
     db.editor_templates.drop()
     create_default_templates()
     return {"status": "reseeded"}
+
+# AI POSTER GENERATOR ENDPOINT
+@app.post("/generate-poster")
+async def generate_poster(
+    file: Optional[UploadFile] = File(None),
+    prompt: Optional[str] = Form(None)
+):
+    try:
+        extracted_text = ""
+        if file:
+            content = await file.read()
+            filename, ext = os.path.splitext(file.filename.lower())
+            if ext == ".pdf":
+                pdf_reader = PyPDF2.PdfReader(io.BytesIO(content))
+                extracted_text = "\n".join([page.extract_text() for page in pdf_reader.pages if page.extract_text()])
+            elif ext == ".docx":
+                doc = docx.Document(io.BytesIO(content))
+                extracted_text = "\n".join([para.text for para in doc.paragraphs])
+            elif ext == ".txt":
+                extracted_text = content.decode("utf-8")
+        
+        full_context = ""
+        if extracted_text:
+            full_context += "Document context: " + extracted_text + "\n"
+        if prompt:
+            full_context += "User description: " + prompt + "\n"
+        
+        if not full_context.strip():
+            raise HTTPException(status_code=400, detail="Please provide a document or a prompt.")
+
+        image_prompt = full_context.strip()
+        
+        # If Mistral is available, use it to craft a better image prompt
+        if mistral_client:
+            ai_msg = mistral_client.chat.complete(
+                model="mistral-large-latest",
+                messages=[{
+                    "role": "user", 
+                    "content": f"Extract the organizational details, title, and key messages from the following text to design a promotional poster.\n\nIMPORTANT: You must write a highly descriptive prompt for a modern image generation AI (like FLUX). The AI is excellent at rendering text. Your prompt MUST explicitly quote the exact words you want printed on the poster using phrases like: with text reading \"THE EXACT WORDS\". Describe the graphical layout, the typography style, and the aesthetic background perfectly suited for an advertisement banner.\n\nOutput ONLY the image generation prompt string.\n\nText:\n{full_context}"
+                }]
+            )
+            image_prompt = ai_msg.choices[0].message.content.strip()
+
+        # Call Hugging Face API using Official SDK
+        from huggingface_hub import AsyncInferenceClient
+        
+        if not HUGGINGFACE_API_KEY or HUGGINGFACE_API_KEY == "your_huggingface_api_key_here":
+            print(f"[PosterGenerator] Simulated Prompt: {image_prompt}")
+            return {
+                "status": "success",
+                "image_url": "https://placehold.co/1080x1080/4F46E5/FFFFFF.png?text=Placeholder+Poster+Generated\nAPI+Key+Missing",
+                "prompt_used": image_prompt
+            }
+
+        try:
+            hf_client = AsyncInferenceClient(api_key=HUGGINGFACE_API_KEY)
+            image = await hf_client.text_to_image(
+                image_prompt,
+                model="black-forest-labs/FLUX.1-schnell"
+            )
+            
+            img_byte_arr = io.BytesIO()
+            image.save(img_byte_arr, format='PNG')
+            image_bytes = img_byte_arr.getvalue()
+            
+            new_file_id = fs.put(image_bytes, filename=f"poster_{datetime.utcnow().timestamp()}.png", content_type="image/png")
+            img_url = f"http://localhost:8000/asset/{str(new_file_id)}"
+            
+            return {"status": "success", "image_url": img_url, "prompt_used": image_prompt}
+            
+        except HTTPException as he:
+            raise he
+        except Exception as e:
+            print(f"Hugging Face request exception: {e}")
+            error_str = str(e)
+            if "loading" in error_str.lower():
+                raise HTTPException(status_code=503, detail="Model is loading. Please try again in 30 seconds.")
+                
+            return {
+                "status": "error",
+                "image_url": f"https://placehold.co/1080x1080/EF4444/FFFFFF.png?text=Hugging+Face+Error",
+                "prompt_used": image_prompt
+            }
+
+    except HTTPException as he:
+        raise he
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Generation failed: {str(e)}")
 
 if __name__ == "__main__":
     import uvicorn
